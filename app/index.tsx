@@ -2,6 +2,8 @@ import { View, Text, Button } from 'react-native';
 import { useRouter } from 'expo-router'; // Importar o hook useRouter
 import React from 'react';
 
+// OLA MUNDO!
+
 export default function Index() {
   const router = useRouter(); // Inicializar o router
 
