@@ -7,16 +7,23 @@ import React from 'react';
 export default function Index() {
   const router = useRouter(); // Inicializar o router
 
-  const handleNavigate = () => {
-    router.replace('/(tabs)/(drawer)/settings'); // Navegar para a pasta 'tabs'
+  const handleNavigateLogin = () => {
+    router.replace('/login'); // Navegar para a pasta 'tabs'
+  };
+  const handleNavigateCreate = () => {
+    router.replace('/createAccount'); // Navegar para a pasta 'tabs'
   };
 
   return (
     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
       <Text style={{fontSize:30}}>Tela de Login</Text>
       <Button 
-        title='Navegar'
-        onPress={handleNavigate} // Chama a função handleNavigate ao pressionar o botão
+        title='Login'
+        onPress={handleNavigateLogin} // Chama a função handleNavigate ao pressionar o botão
+      />
+      <Button 
+        title='Criar conta'
+        onPress={handleNavigateCreate} // Chama a função handleNavigate ao pressionar o botão
       />
     </View>
   );

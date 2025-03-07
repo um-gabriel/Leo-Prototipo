@@ -5,12 +5,20 @@ export default function Layout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer>
+
         <Drawer.Screen 
-            name="(drawer)"
+            name="Home"
         />
         <Drawer.Screen 
-            name="index"
+            name="Avisos"
         />
+        <Drawer.Screen 
+            name="Config"
+        />
+        <Drawer.Screen 
+            name="CreateJob"
+        />
+
       </Drawer>
     </GestureHandlerRootView>
   );
