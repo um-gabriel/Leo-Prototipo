@@ -7,10 +7,10 @@ export function Botão({ ...rest }: TouchableOpacityProps) {
   return (
     <TouchableOpacity
       style={{
-        width: '100%',
+        width: '90%',
         height: 60,
         backgroundColor: colors.amarelo2,
-        borderRadius: 5,
+        borderRadius: 10,
         justifyContent: "center",
         alignItems: "center",
       }}
@@ -77,10 +77,9 @@ export function TxtInput({ ...rest }: TextInputProps) {
   return (
     <TextInput
       style={{
-        width: '100%',
+        width: '90%',
         height: 55,
         paddingLeft: 30,
-        color: colors.tituloBranco,
         borderColor: colors.amarelo2,
         borderWidth: 1.2,
         borderRadius: 8,
