@@ -11,6 +11,10 @@ export default function Layout() {
           name="Home"
           options={{
             title: "Home",
+            headerTitleStyle: {
+              color: colors.tituloBranco
+            },
+            headerTintColor: colors.tituloBranco, // Altere 'red' para a cor desejada
             headerStyle: {
               backgroundColor: colors.fundo2, // Definindo a cor de fundo do cabeçalho
             },
@@ -23,6 +27,13 @@ export default function Layout() {
           name="Avisos"
           options={{
             title: "Avisos",
+            headerTitleStyle: {
+              color: colors.tituloBranco
+            },
+            headerTintColor: colors.tituloBranco, // Altere 'red' para a cor desejada
+            headerStyle: {
+              backgroundColor: colors.fundo2, // Definindo a cor de fundo do cabeçalho
+            },
             drawerIcon: ({ color }) => (
               <Ionicons name="notifications-outline" size={24} color={color} /> // Ícone de Avisos
             ),
@@ -32,6 +43,13 @@ export default function Layout() {
           name="Geral"
           options={{
             title: "Oportunidades em geral",
+            headerTitleStyle: {
+              color: colors.tituloBranco
+            },
+            headerTintColor: colors.tituloBranco, // Altere 'red' para a cor desejada
+            headerStyle: {
+              backgroundColor: colors.fundo2, // Definindo a cor de fundo do cabeçalho
+            },
             drawerIcon: ({ color }) => (
               <Ionicons name="briefcase-outline" size={24} color={color} /> // Ícone Geral
             ),
@@ -41,6 +59,12 @@ export default function Layout() {
           name="CreateJob"
           options={{
             title: "Criar vagas ou serviços",
+            headerTitleStyle: {
+              color: colors.tituloBranco
+            },
+            headerStyle: {
+              backgroundColor: colors.fundo2, // Definindo a cor de fundo do cabeçalho
+            },
             drawerIcon: ({ color }) => (
               <Ionicons name="add-circle-outline" size={24} color={color} /> // Ícone de Criar Vagas
             ),
@@ -50,6 +74,13 @@ export default function Layout() {
           name="Config"
           options={{
             title: "Configurações",
+            headerTitleStyle: {
+              color: colors.tituloBranco
+            },
+            headerTintColor: colors.tituloBranco, // Altere 'red' para a cor desejada
+            headerStyle: {
+              backgroundColor: colors.fundo2, // Definindo a cor de fundo do cabeçalho
+            },
             drawerIcon: ({ color }) => (
               <Ionicons name="settings-outline" size={24} color={color} /> // Ícone de Configurações
             ),

@@ -16,10 +16,10 @@ export default function Home() {
   
   //Essa função ela envia atraves das telas "router.push" os valores q vc selecionou ao clicar na box
   const boxSetores = (coleção: any, campo: any, valor: any) => {
-    // router.push(`/(tabs)/vagas/VagasEmprego?coleção=${coleção}&campo=${campo}&valor=${valor}`); // Passa ambos os valores como parâmetros
+    router.push(`../Geral?coleção=${coleção}&campo=${campo}&valor=${valor}`); // Passa ambos os valores como parâmetros
   };
   const CriarVagas = (coleçãoUnica: any) => {
-    // router.push(`/(tabs)/vagas/VagasEmprego?coleção=${coleçãoUnica}`);
+    router.push(`../Geral?coleção=${coleçãoUnica}`);
   };
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function Home() {
                     </View>
                     <Text style={styles.BoxContainerEmpresas_text}>Saúde</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.BoxContainerEmpresas} onPress={() => boxSetores('Vagas-trabalho', 'setor', 'TI')}  >
+                  <TouchableOpacity style={styles.BoxContainerEmpresas} onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Magia e produção')}  >
                     <View style={styles.boxImage}>
                         <MaterialIcons name="computer" size={27} color={colors.amarelo2} />
                     </View>
