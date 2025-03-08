@@ -31,4 +31,27 @@ export async function dados_usuario(passData) {
     } finally {
       setLoading(false);
     }
+};
+
+// Função para buscar as vagas do usuário
+export async function userVagas (userVagasFunc) {
+  const { setUserVagasList, setFilteredVagas, setLoading } = userVagasFunc
+  const userAuth = verification();
+  try {
+      const q = query(
+          collection(db, "Vagas-trabalhos"),
+          where("uid_criadorVaga", "==", userAuth.uid)
+      );
+      const querySnapshot = await getDocs(q);      
+      const UsersVagasArray = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+      }));
+      setUserVagasList(UsersVagasArray);
+      setFilteredVagas(UsersVagasArray); // Inicializa com todos os dados
+  } catch (error) {
+      console.error("Erro vc não esta logado:", error);
+  } finally {
+      setLoading(false);
+  }
   };

@@ -11,7 +11,7 @@ export const getVagas = async (DadosJobs: any) => {
     try {
         const q = query(
         collection(db, "Vagas-trabalhos"),
-        limit(3) // Limita a 2 resultados
+        limit(3) // Limita a 3 resultados
         );
         const querySnapshot = await getDocs(q);
         const jobsArray = querySnapshot.docs.map(doc => ({
@@ -61,6 +61,28 @@ export const fetchJobs_Geral = async (valueData: any, dataBox: any, dataBox2: an
         console.error("Erro ao buscar as vagas:", error);
     } finally {
         // Certifica-se de que o loading seja setado como false após a operação
+        setLoading(false);
+    }
+};
+
+export async function getFreelancerVagas (DadosFreelancer: any)  {
+    const {setFreelancer, setFilteredFreelancer, setLoading} =  DadosFreelancer;
+    
+    try {
+        const q = query(
+        collection(db, "Vagas-Freelancer"),
+        limit(4) // Limita a 2 resultados
+        );
+        const querySnapshot = await getDocs(q);
+        const jobsArray = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        }));
+        setFreelancer(jobsArray);
+        setFilteredFreelancer(jobsArray); // Inicializa com todos os dados
+    } catch (error) {
+        console.error("Erro ao buscar as vagas freelancer:", error);
+    } finally {
         setLoading(false);
     }
 };

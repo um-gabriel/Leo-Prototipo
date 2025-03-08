@@ -6,7 +6,8 @@ import { Users, Vagas, width, height, verification, Empresas } from '@/src/fireb
 import { db } from '@/src/firebase/config';
 import { collection, getDocs, query, where, doc, deleteDoc } from 'firebase/firestore';
 import { useRouter } from 'expo-router';
-import { dados_usuario } from '@/src/firebase/functions/get/getInforUser';
+import { dados_usuario, userVagas } from '@/src/firebase/functions/get/getInforUser';
+import { handleDeleteVaga } from '@/src/firebase/functions/delete/deleteJob';
 
 export default function Account() {
   const [usersData, setUsersData] = useState<Users[]>([]);
@@ -18,32 +19,17 @@ export default function Account() {
   const [tipoConta, setTipoConta] = useState<string | null>(null);
 
   useEffect(() => {
-    userVagas();
+    
+    const userVagaData = { setUserVagasList, setFilteredVagas, setLoading }
+    userVagas(userVagaData);
     const passData = { setUsersData, setFilteredUsersData, setTipoConta, setLoading }
     dados_usuario(passData);
+    const vagaId = { filteredVagas }
+    handleDeleteVaga(vagaId);
+
   }, []);
 
-  // Função para buscar as vagas do usuário
-  async function userVagas () {
-  const userAuth = verification();
-  try {
-      const q = query(
-          collection(db, "Vagas-trabalhos"),
-          where("uid_criadorVaga", "==", userAuth.uid)
-      );
-      const querySnapshot = await getDocs(q);      
-      const UsersVagasArray = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-      }));
-      setUserVagasList(UsersVagasArray);
-      setFilteredVagas(UsersVagasArray); // Inicializa com todos os dados
-  } catch (error) {
-      console.error("Erro vc não esta logado:", error);
-  } finally {
-      setLoading(false);
-  }
-  };
+
 
   if (loading) {
     return (
@@ -93,7 +79,7 @@ export default function Account() {
         <Text style={styles.title}>{item.name_conta}</Text>
         <Text style={styles.subTitle}>{item.gmail}</Text>
       </View>
-      <View style={styles.areaLow}>
+      <View style={styles.areaLow}> 
         <View style={styles.areaLow_top}>
           <View style={styles.areaLow_areaInfor}>
             <Text style={styles.areaLow_top_text}>Informações da conta</Text>
@@ -198,6 +184,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.preto
   },
   sectionTitle: {
     fontSize: 20,
@@ -270,7 +257,7 @@ const styles = StyleSheet.create({
     color: colors.cinza2,
   },
   areaLow_low_text2: {
-    fontSize: 18,
+    fontSize: 16,
     color: colors.tituloAmarelo,
   },
 });
@@ -318,24 +305,3 @@ const stylesVagas = StyleSheet.create({
     marginTop: 20,
   },
 });
-
-export async function handleDeleteVaga(vagaId: string) {
-  try {
-    const userAuth = verification();
-    if (!userAuth.isAuthenticated) {
-      console.error("User is not authenticated");
-      return;
-    }
-
-    // Deletar o documento da coleção Vagas-trabalhos
-    const vagaRef = doc(db, "Vagas-trabalhos", vagaId);
-    await deleteDoc(vagaRef);
-    
-    // Atualizar a lista de vagas após a exclusão
-    filteredVagas();
-  } catch (error) {
-    console.error("Error deleting job posting:", error);
-  }
-};
-
-export default Account;

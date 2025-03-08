@@ -62,6 +62,7 @@ export default function Layout() {
             headerTitleStyle: {
               color: colors.tituloBranco
             },
+            headerTintColor: colors.tituloBranco, // Altere 'red' para a cor desejada
             headerStyle: {
               backgroundColor: colors.fundo2, // Definindo a cor de fundo do cabeçalho
             },
