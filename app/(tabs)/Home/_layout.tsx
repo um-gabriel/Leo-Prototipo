@@ -2,6 +2,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { colors } from '@/src/components/global';
 
 export default function Layout() {
   return (
@@ -9,17 +10,11 @@ export default function Layout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          position: 'absolute',
-          bottom: 8, // distancia da parte inferior da tela
-          left: 20, // distancia da lateral esquerda
-          right: 20, // distancia da lateral direita
-          borderRadius: 15, // bordas arredondadas
+          position: 'relative',
           paddingHorizontal: 20,
-          margin: 20,
           justifyContent: "center",
-          height: 60, // altura da tab
-          backgroundColor: 'white', // cor de fundo da tab
-          elevation: 10, // sombra (para Android)
+          height: 70, // altura da tab
+          backgroundColor: colors.fundo, // cor de fundo da tab
         },
 
         // tabBarShowLabel: false, // opcional: para esconder os labels das tabs
@@ -34,7 +29,7 @@ export default function Layout() {
             fontWeight: 'bold', // opcional: para deixar o texto em negrito
           },
           tabBarIcon: ({ size, color, focused }) => {
-              return <MaterialCommunityIcons name='home' color={color} size={33} top={5}/>
+              return <MaterialCommunityIcons name='home' color={color} size={33} top={10}/>
           },
         }}
         />
@@ -47,7 +42,7 @@ export default function Layout() {
             fontWeight: 'bold', // opcional: para deixar o texto em negrito
           },
           tabBarIcon: ({ size, color, focused }) => {
-              return <MaterialCommunityIcons name='book' color={color} size={33} top={5}/>
+              return <MaterialCommunityIcons name='book' color={color} size={33} top={10} />
           },
         }}
         />
@@ -60,7 +55,7 @@ export default function Layout() {
             fontWeight: 'bold', // opcional: para deixar o texto em negrito
           },
           tabBarIcon: ({ size, color, focused }) => {
-              return <MaterialCommunityIcons name='account' color={color} size={33} top={5}/>
+              return <MaterialCommunityIcons name='account' color={color} size={33} top={10} />
           },
         }}
         />
