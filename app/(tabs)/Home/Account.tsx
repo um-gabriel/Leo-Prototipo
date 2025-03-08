@@ -6,6 +6,7 @@ import { Users, Vagas, width, height, verification, Empresas } from '@/src/fireb
 import { db } from '@/src/firebase/config';
 import { collection, getDocs, query, where, doc, deleteDoc } from 'firebase/firestore';
 import { useRouter } from 'expo-router';
+import { dados_usuario } from '@/src/firebase/functions/get/getInforUser';
 
 export default function Account() {
   const [usersData, setUsersData] = useState<Users[]>([]);
@@ -18,38 +19,10 @@ export default function Account() {
 
   useEffect(() => {
     userVagas();
-    dados_usuario();
+    const passData = { setUsersData, setFilteredUsersData, setTipoConta, setLoading }
+    dados_usuario(passData);
   }, []);
 
-  async function dados_usuario() {
-    const userAuth = verification();
-    if (!userAuth.isAuthenticated) {
-      console.error("User is not authenticated");
-      setLoading(false);
-      return;
-    }
-    try {
-      const q = query(
-        collection(db, "Contas"),
-        where("uid", "==", userAuth.uid)
-      );
-      const querySnapshot = await getDocs(q);      
-      const usersDataArray = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setUsersData(usersDataArray);
-      setFilteredUsersData(usersDataArray);
-
-      if (usersDataArray.length > 0) {
-        setTipoConta(usersDataArray[0].tipo_conta);
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
   // Função para buscar as vagas do usuário
   async function userVagas () {
   const userAuth = verification();
@@ -113,6 +86,7 @@ export default function Account() {
       </View>
     </View>
   );
+
   const renderUserPessoa = ({ item }: { item: Users }) => (
     <View style={styles.data}>
       <View style={styles.areaTop}>
@@ -207,7 +181,7 @@ export default function Account() {
               scrollEnabled={false}
             />
           ) : (
-            <Text style={stylesVagas.emptyMessage}>You haven't posted any job positions yet.</Text>
+            <Text style={stylesVagas.emptyMessage}>Voce não tem vagas postadas ainda.</Text>
           )}
         </View>
       </ScrollView>
@@ -232,14 +206,14 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   data: {
-    width: width * 1,
+    maxWidth: width * 1,
     minHeight: height * 0.10,
     alignItems: 'center',
   },
   areaTop: {
     backgroundColor: colors.fundo2,
-    width: '100%',
-    height: height * 0.23,
+    width: width * 1,
+    height: 130,
     justifyContent: 'flex-end'
   },
   title: {
@@ -257,11 +231,12 @@ const styles = StyleSheet.create({
 
   areaLow: {
     width: '90%',
+    maxHeight: 500,
     padding: 15,
-    maxHeight: 300,
     backgroundColor: colors.fundo2,
     borderRadius: 20,
     marginTop: 20,
+    flexWrap: "wrap",
     alignItems: 'center',
   },
   areaLow_top: {

@@ -38,6 +38,32 @@ export default function Layout() {
           },
         }}
         />
+      <Tabs.Screen 
+        name="Others"
+        options={{
+          title: "",         
+          tabBarLabelStyle: { 
+            fontSize: 12, // ajuste o tamanho da fonte aqui
+            fontWeight: 'bold', // opcional: para deixar o texto em negrito
+          },
+          tabBarIcon: ({ size, color, focused }) => {
+              return <MaterialCommunityIcons name='book' color={color} size={33} top={5}/>
+          },
+        }}
+        />
+      <Tabs.Screen 
+        name="Account"
+        options={{
+          title: "",         
+          tabBarLabelStyle: { 
+            fontSize: 12, // ajuste o tamanho da fonte aqui
+            fontWeight: 'bold', // opcional: para deixar o texto em negrito
+          },
+          tabBarIcon: ({ size, color, focused }) => {
+              return <MaterialCommunityIcons name='account' color={color} size={33} top={5}/>
+          },
+        }}
+        />
       </Tabs>
       
   );
