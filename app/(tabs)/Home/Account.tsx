@@ -29,8 +29,6 @@ export default function Account() {
 
   }, []);
 
-
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>

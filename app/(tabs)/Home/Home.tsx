@@ -27,8 +27,8 @@ export default function Home() {
     getVagas(DadosJobs);
   }, []);
   
+  // CONST DOS ITEMS DAS VAGAS
   const renderItem = ({ item }: {item: Vagas}) => {
-    console.log('Item da lista:', item); // Debug para ver os dados que estão chegando
     return (
       <View style={stylesVagas.item}>
         <Text style={stylesVagas.title}>{item.name_vaga}</Text>
