@@ -72,6 +72,22 @@ export default function Layout() {
           }}  
         />
         <Drawer.Screen 
+          name="CreateFreelancerJob"
+          options={{
+            title: "Criar serviços freelancer",
+            headerTitleStyle: {
+              color: colors.tituloBranco
+            },
+            headerTintColor: colors.tituloBranco, // Altere 'red' para a cor desejada
+            headerStyle: {
+              backgroundColor: colors.fundo2, // Definindo a cor de fundo do cabeçalho
+            },
+            drawerIcon: ({ color }) => (
+              <Ionicons name="add-circle-outline" size={24} color={color} /> // Ícone de Criar Vagas
+            ),
+          }}  
+        />
+        <Drawer.Screen 
           name="Config"
           options={{
             title: "Configurações",
