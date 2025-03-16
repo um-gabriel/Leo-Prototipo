@@ -1,5 +1,5 @@
 import React, { useState }  from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { TxtInput } from '../src/components/objects';
 import { Botão } from '../src/components/objects';
@@ -21,12 +21,14 @@ export default function Login() {
         signInWithEmailAndPassword(auth, email, password)
           .then(value => {
               console.log("Login realizado com sucesso! Seja bem vindo \n" + value.user.uid + " - " + email);
+              Alert.alert("Login bem sucedido!", "Seja bem vindo de volta")
               router.replace('/(tabs)/Home/Home')
           })
           .catch((error) => console.log(error.message)); // Corrigido aqui: melhor tratamento de erro 
       } 
       catch(erro) {
         console.error("Erro antes de iniciar  a função")
+        Alert.alert("Erro no login")
       } 
       finally {
         console.log("Função login realizada")

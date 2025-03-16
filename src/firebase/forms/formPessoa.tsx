@@ -2,12 +2,12 @@
 import { colors } from '@/src/components/global';
 import { Botão, TxtInput } from '@/src/components/objects';
 import { auth, db } from '@/src/firebase/config';
-import { height, width } from '@/src/firebase/functions/interface';
+import { height, verification, width } from '@/src/firebase/functions/interface';
 import { Link, useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -15,11 +15,54 @@ export const FormPessoa = () => {
   const router = useRouter();
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [confirmarPassword, setConfirmarPassword] = useState('')
+  const [telefone, setTelefone] = useState('')
+  const [endereco, setEndereco] = useState('')
+  const [descricao, setDescricao] = useState('')
+  const [links, setLinks] = useState('')
+  const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const tipo_conta = 'Pessoa'
+
+  async function createUser() {
+    if (name == "" || email == "" || password == "" || descricao == "" || endereco == "" || links == "") {
+      Alert.alert("Preencha todos os campos")
+    }
+    else {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(value => {
+                console.log("Cadastrado com sucesso! \n" + value.user.uid);
+          
+                try {
+                  const dadosConta = {
+                        uid: verification().uid,
+                        email: email,
+                        nomeUsuario: name,
+                        senha: password,
+                        telefone: telefone,
+                        endereco: endereco,
+                        desc_sobre: descricao,
+                        links_externos: links
+                  };
+                  addDoc(collection(db, 'Contas'), dadosConta);
+                  Alert.alert('Concluído!', 'Conta criada');
+                  router.replace('/(tabs)/Home/Home');
+                } catch {
+                  console.error("Erro ao configurar no firestore!", Error)
+                  Alert.alert("Erro ao cadastrar!", "Verifique as informações")
+                }
+          })
+            .catch((error) => console.log(error.message)); // Corrigido aqui: melhor tratamento de erro
+    }
+};
+
+if (isLoading) {
+  return (
+    <View style={card.loadingContainer}>
+      <ActivityIndicator size="large" color={colors.amarelo2} />
+      <Text style={{color: colors.tituloBranco}}>Carregando vagas...</Text>
+    </View>
+  );
+};
 
    return (
     <View style={styles.container}>
@@ -37,8 +80,8 @@ export const FormPessoa = () => {
           <View style={styles.containerMed_AreaInput}>
                 <Text style={styles.containerMed_AreaInput_text}>Digite seu email:</Text>
                 <TxtInput
-                  value={name}
-                  onChangeText={setName}
+                  value={email}
+                  onChangeText={setEmail}
                   placeholder="..."
                   placeholderTextColor={colors.amarelo2}
                 />
@@ -46,8 +89,8 @@ export const FormPessoa = () => {
           <View style={styles.containerMed_AreaInput}>
                 <Text style={styles.containerMed_AreaInput_text}>Digite seu telefone: (Opcional)</Text>
                 <TxtInput
-                  value={name}
-                  onChangeText={setName}
+                  value={telefone}
+                  onChangeText={setTelefone}
                   placeholder="..."
                   placeholderTextColor={colors.amarelo2}
                 />
@@ -55,8 +98,8 @@ export const FormPessoa = () => {
           <View style={styles.containerMed_AreaInput}>
                 <Text style={styles.containerMed_AreaInput_text}>Digite seu endereço:</Text>
                 <TxtInput
-                  value={name}
-                  onChangeText={setName}
+                  value={endereco}
+                  onChangeText={setEndereco}
                   placeholder="..."
                   placeholderTextColor={colors.amarelo2}
                 />
@@ -64,8 +107,8 @@ export const FormPessoa = () => {
           <View style={styles.containerMed_AreaInput}>
                 <Text style={styles.containerMed_AreaInput_text}>Digite uma descrição sobre você:</Text>
                 <TxtInput
-                  value={name}
-                  onChangeText={setName}
+                  value={descricao}
+                  onChangeText={setDescricao}
                   placeholder="..."
                   placeholderTextColor={colors.amarelo2}
                 />
@@ -73,8 +116,8 @@ export const FormPessoa = () => {
           <View style={styles.containerMed_AreaInput}>
                 <Text style={styles.containerMed_AreaInput_text}>Digite seus links de contato(github, instagram):</Text>
                 <TxtInput
-                  value={name}
-                  onChangeText={setName}
+                  value={links}
+                  onChangeText={setLinks}
                   placeholder="..."
                   placeholderTextColor={colors.amarelo2}
                 />
@@ -82,18 +125,24 @@ export const FormPessoa = () => {
           <View style={styles.containerMed_AreaInput}>
                 <Text style={styles.containerMed_AreaInput_text}>Digite senha:</Text>
                 <TxtInput
-                  value={name}
-                  onChangeText={setName}
+                  value={password}
+                  onChangeText={setPassword}
                   placeholder="..."
                   placeholderTextColor={colors.amarelo2}
+                  secureTextEntry
                 />
           </View>
 
-          <View style={styles.buttonArea}>
-                <Botão>  
-                    <Text style={styles.textButton}>Cadastrar</Text>
-                </Botão>
-          </View>
+          {isLoading ? (
+                    <ActivityIndicator size="large" color={colors.amarelo1} />
+                  ) : (
+                    <View style={styles.buttonArea}>
+                    <Botão onPress={() => createUser()}>  
+                        <Text style={styles.textButton}>Cadastrar</Text>
+                    </Botão>
+              </View>
+                  )} 
+
 
           <Text style={styles.lowText}>
             Deseja fazer login?
