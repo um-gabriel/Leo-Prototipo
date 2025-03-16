@@ -48,15 +48,14 @@ export interface Freelancer {
 };
 
 export interface CandidaturaVaga {
-    id_candidatura: string,
-    vaga_id: string;
-    vaga_name: string;
-    candidatoId: string;
-    candidato_name: string,
-    criadorId: string;
-    dataCandidatura: string;
-    status: 'pendente' | 'aprovado' | 'rejeitado';
-};
+    id_candidatura: string;
+    uid_candidato: string;
+    uid_criadorVaga: string;
+    nome_vaga: string;
+    status: string;
+    candidato_name: string;
+    dataCandidatura: Date;
+}
 
 export interface CandidaturaError {
     code: string;
@@ -64,90 +63,28 @@ export interface CandidaturaError {
     details?: any;
 }
 
-export const handleCandidaturaError = (error: any): CandidaturaError => {
-    if (error.code) {
-        switch (error.code) {
-            case 'already-applied':
-                return {
-                    code: 'already-applied',
-                    message: 'Você já se candidatou para esta vaga'
-                };
-            case 'permission-denied':
-                return {
-                    code: 'permission-denied',
-                    message: 'Você não tem permissão para se candidatar a esta vaga'
-                };
-            default:
-                return {
-                    code: 'unknown',
-                    message: 'Ocorreu um erro ao processar sua candidatura. Tente novamente.',
-                    details: error
-                };
-        }
-    }
-    return {
-        code: 'unknown',
-        message: 'Erro inesperado ao realizar candidatura',
-        details: error
-    };
-};
 
 export const { width, height } = Dimensions.get('window');
 
 
 export const verification = () => {
-    const user = auth.currentUser;
+    const user = auth.currentUser ; // Obtém o usuário atual
+
     if (!user) {
         console.log("Usuário não logado");
         return {
             isAuthenticated: false,
             uid: null,
             email: null,
-            tipo_conta: null
+            name_conta: null,
+            tipo_conta: null,
         };
     }
+
     return {
         isAuthenticated: true,
         uid: user.uid,
         email: user.email,
-        name_conta: user.name_conta,
+        name_conta: user.displayName || null, // Use displayName se disponível
     };
-}
-
-export const verification_tipo_conta = async () => {
-    const { isAuthenticated, uid } = verification();
-    if (!isAuthenticated) {
-        return {
-            isAuthenticated: false,
-            tipo_conta: null,
-            userData: null
-        };
-    }
-
-    try {
-        const userDoc = await getDoc(doc(db, 'Contas', uid));
-        if (!userDoc.exists()) {
-            return {
-                isAuthenticated: true,
-                tipo_conta: null,
-                userData: null
-            };
-        }
-        const userData = userDoc.data();
-        return {
-            isAuthenticated: true,
-            tipo_conta: userData.tipo_conta,
-            userData: userData
-        };
-        
-    } catch (error) {
-        console.error("Erro ao buscar tipo de conta:", error);
-        return {
-            isAuthenticated: true,
-            tipo_conta: null,
-            userData: null,
-            error
-        };
-    }
-
-}
+};

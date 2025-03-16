@@ -4,16 +4,11 @@ import { db } from "../../config";
 
 export async function dados_usuario(passData) {
     const {setUsersData, setFilteredUsersData, setTipoConta, setLoading } = passData
-    const userAuth = verification();
-    if (!userAuth.isAuthenticated) {
-      console.error("User is not authenticated");
-      setLoading(false);
-      return;
-    }
+
     try {
-      const q = query(
+      const  q= query(
         collection(db, "Contas"),
-        where("uid", "==", userAuth.uid)
+        where("uid", "==", verification().uid)
       );
       const querySnapshot = await getDocs(q);      
       const usersDataArray = querySnapshot.docs.map(doc => ({

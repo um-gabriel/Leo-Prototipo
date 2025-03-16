@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, Alert } from 'react-native';
-import { AntDesign, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '@/src/components/global';
-import { Users, Vagas, width, height, verification, Empresas } from '@/src/firebase/functions/interface';
-import { db } from '@/src/firebase/config';
-import { collection, getDocs, query, where, doc, deleteDoc } from 'firebase/firestore';
+import { Users, Vagas, width, height, Empresas } from '@/src/firebase/functions/interface';
 import { useRouter } from 'expo-router';
 import { dados_usuario, userVagas } from '@/src/firebase/functions/get/getInforUser';
 import { handleDeleteVaga } from '@/src/firebase/functions/delete/deleteJob';
@@ -19,11 +17,12 @@ export default function Account() {
   const [tipoConta, setTipoConta] = useState<string | null>(null);
 
   useEffect(() => {
-    
     const userVagaData = { setUserVagasList, setFilteredVagas, setLoading }
     userVagas(userVagaData);
+
     const passData = { setUsersData, setFilteredUsersData, setTipoConta, setLoading }
     dados_usuario(passData);
+    
     const vagaId = { filteredVagas }
     handleDeleteVaga(vagaId);
 

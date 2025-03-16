@@ -5,7 +5,9 @@ import { TxtInput } from '../src/components/objects';
 import { Botão } from '../src/components/objects';
 import { colors } from '@/src/components/global';
 import { width } from '@/src/firebase/functions/interface';
-import { onLoginPress } from '@/src/firebase/functions/get/getLogin';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/src/firebase/config';
+import { connectFirestoreEmulator } from 'firebase/firestore';
 
 export default function Login() {
   const router = useRouter(); // Rotas
@@ -13,9 +15,23 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async () => {
-    const ValuesLogin = { email, password, setIsLoading, router };
-    await onLoginPress(ValuesLogin);
+  async function login() {
+      try {
+        setIsLoading(true)
+        signInWithEmailAndPassword(auth, email, password)
+          .then(value => {
+              console.log("Login realizado com sucesso! Seja bem vindo \n" + value.user.uid + " - " + email);
+              router.replace('/(tabs)/Home/Home')
+          })
+          .catch((error) => console.log(error.message)); // Corrigido aqui: melhor tratamento de erro 
+      } 
+      catch(erro) {
+        console.error("Erro antes de iniciar  a função")
+      } 
+      finally {
+        console.log("Função login realizada")
+        setIsLoading(false)
+      }
   };
 
   // const handleRecoveryPress = async () => {
@@ -52,7 +68,7 @@ export default function Login() {
         {isLoading ? (
           <ActivityIndicator size="large" color={colors.amarelo1} />
         ) : (
-          <Botão activeOpacity={0.8} onPress={handleLogin} >
+          <Botão activeOpacity={0.8} onPress={login} >
             <Text style={{ fontSize: 18, color: colors.tituloBranco }}>Entrar</Text>
           </Botão>
         )} 
@@ -71,7 +87,7 @@ const Style = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: "#242424",
+    backgroundColor: colors.preto,
   },
   cardTop: {
     height: '24%',

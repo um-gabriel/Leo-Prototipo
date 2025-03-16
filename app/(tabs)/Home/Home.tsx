@@ -3,10 +3,10 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList, Activit
 import { colors } from '@/src/components/global';
 import { BotãoInicio } from '@/src/components/objects';
 import { useRouter } from 'expo-router';
-import { height, Vagas, width } from '@/src/firebase/functions/interface';
+import { height, Vagas, verification, width } from '@/src/firebase/functions/interface';
 import { Feather, FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { getVagas } from '@/src/firebase/functions/get/getJobs';
-
+import { handleAddVagaCLT } from '@/src/firebase/functions/create/createCandidatura';
 
 export default function Home() {
   const [jobs, setJobs] = useState([]);
@@ -14,44 +14,75 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   
-  //Essa função ela envia atraves das telas "router.push" os valores q vc selecionou ao clicar na box
+  // Função para enviar dados através das telas
   const boxSetores = (coleção: any, campo: any, valor: any) => {
-    router.push(`../Geral?coleção=${coleção}&campo=${campo}&valor=${valor}`); // Passa ambos os valores como parâmetros
+    router.push(`../Geral?coleção=${coleção}&campo=${campo}&valor=${valor}`);
   };
+
   const CriarVagas = (coleçãoUnica: any) => {
     router.push(`../Geral?coleção=${coleçãoUnica}`);
   };
 
   useEffect(() => {
-    const DadosJobs = {setJobs, setFilteredJobs, setLoading }
+    const DadosJobs = { setJobs, setFilteredJobs, setLoading };
     getVagas(DadosJobs);
   }, []);
   
-  // CONST DOS ITEMS DAS VAGAS
-  const renderItem = ({ item }: {item: Vagas}) => {
+  // Renderização dos itens das vagas
+  const renderItem = ({ item }: { item: Vagas }) => {
+    console.log(item); // Verifique o objeto item
+
+    // Verifique se os valores necessários estão definidos
+    if (!item.id || !item.uid_criadorVaga) {
+      return (
+        <View style={stylesVagas.item}>
+          <Text style={stylesVagas.title}>Vaga inválida</Text>
+        </View>
+      );
+    }
+
     return (
       <View style={stylesVagas.item}>
         <Text style={stylesVagas.title}>{item.name_vaga}</Text>
         <Text style={stylesVagas.subTitle}>{item.empresa}</Text>
         <View style={stylesVagas.box_mode}>
-            <Text style={stylesVagas.mode}>Salario: R$</Text>
-            <Text style={stylesVagas.mode}>{item.salario}</Text>
+          <Text style={stylesVagas.mode}>Salário: R$</Text>
+          <Text style={stylesVagas.mode}>{item.salario}</Text>
         </View>
         <View style={stylesVagas.box_mode}>
-            <Text style={stylesVagas.mode}>Modalidades: R$</Text>
-            <Text style={stylesVagas.mode}> {item.modalidades}</Text>
+          <Text style={stylesVagas.mode}>Modalidades:</Text>
+          <Text style={stylesVagas.mode}>{item.modalidades}</Text>
         </View>    
         <View style={stylesVagas.box_mode}>
-            <Text style={stylesVagas.mode}>Contato:</Text>
-            <Text style={stylesVagas.mode}>{item.gmail}</Text>
+          <Text style={stylesVagas.mode}>Contato:</Text>
+          <Text style={stylesVagas.mode}>{item.gmail}</Text>
         </View>
         <View style={stylesVagas.box_mode}>
-            <Text style={stylesVagas.mode}>Loclização:</Text>
-            <Text style={stylesVagas.mode}> {item.localizacao}</Text>
+          <Text style={stylesVagas.mode}>Localização:</Text>
+          <Text style={stylesVagas.mode}>{item.localizacao}</Text>
         </View>   
         <TouchableOpacity 
           style={stylesVagas.buttonCandidatar}
-          // onPress={() => handleCandidatura(item)}      
+          onPress={async () => {
+            const userVerification = verification();
+            if (!userVerification || !userVerification.uid) {
+              alert('Erro: Usuário não autenticado');
+              return;
+            }
+            try {
+              await handleAddVagaCLT({
+                userId: userVerification.uid,
+                uidCriadorVaga: item.uid_criadorVaga,
+                nome_vaga: item.name_vaga,
+                nome_candidato: userVerification.name_conta,
+                setLoading: setLoading
+              });
+              alert('Candidatura realizada com sucesso!');
+            } catch (error) {
+              console.error('Erro ao candidatar-se:', error);
+              alert('Erro ao realizar candidatura. Tente novamente.');
+            }
+          }}
         >
           <Text style={stylesVagas.buttonText}>Candidatar-se</Text>
         </TouchableOpacity>

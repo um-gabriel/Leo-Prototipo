@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db, auth } from '@/src/firebase/config';
 import { colors } from '@/src/components/global';
@@ -9,36 +9,47 @@ export default function Avisos() {
   const [candidaturas, setCandidaturas] = useState<CandidaturaVaga[]>([]);
 
   useEffect(() => {
-    if (!auth.currentUser?.uid) return;
+    const userId = verification().uid;
 
-    const q = query(
-      collection(db, 'candidaturas'),
-      where('criadorId', '==', auth.currentUser.uid)
-    );
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const novasCandidaturas = snapshot.docs.map(doc => ({
-        id_candidatura: doc.id,
-        ...doc.data()
-      })) as CandidaturaVaga[];
-      
-      setCandidaturas(novasCandidaturas);
-    });
+    if (userId) {
+      const candidaturasRef = collection(db, 'candidaturas');
+      const q = query(candidaturasRef, where('uidCriadorVaga', '==', userId));
 
-    return () => unsubscribe();
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const candidaturasData: CandidaturaVaga[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          console.log('Candidatura recebida:', data); // Log para verificar os dados recebidos
+          candidaturasData.push({
+            id_candidatura: doc.id,
+            uid_candidato: data.userId,
+            uid_criadorVaga: data.uidCriadorVaga,
+            nome_vaga: data.nome_vaga,
+            status: data.status || 'Pendente',
+            candidato_name: data.nome_candidato,
+            dataCandidatura: data.createdAt ? data.createdAt.toDate() : new Date(),
+          });
+        }); 
+        console.log('Candidaturas processadas:', candidaturasData); // Log para verificar as candidaturas processadas
+        setCandidaturas(candidaturasData);
+      });
+
+      // Limpeza do listener quando o componente é desmontado
+      return () => unsubscribe();
+    }
   }, []);
 
   const renderCandidatura = ({ item }: { item: CandidaturaVaga }) => (
     <View style={styles.candidaturaItem}>
-      <Text style={styles.titulo}>{item.vaga_name}</Text>
+      <Text style={styles.titulo}>{item.nome_vaga}</Text>
       <Text style={styles.info}>
-        <Text style={{color: colors.amarelo2}}>Status:</Text> {item.status}
+        <Text style={{ color: colors.amarelo2 }}>Status:</Text> {item.status}
       </Text>
       <Text style={styles.info}>
-        <Text style={{color: colors.amarelo2}}>Candidato:</Text> {item.candidato_name}
+        <Text style={{ color: colors.amarelo2 }}>Candidato:</Text> {item.candidato_name}
       </Text>
       <Text style={styles.info}>
-        <Text style={{color: colors.amarelo2}}>Data:</Text> {new Date(item.dataCandidatura).toLocaleDateString()}
+        <Text style={{ color: colors.amarelo2 }}>Data:</Text> {new Date(item.dataCandidatura).toLocaleDateString('pt-BR')}
       </Text>
     </View>
   );
@@ -47,7 +58,7 @@ export default function Avisos() {
     <View style={styles.container}>
       <Text style={styles.header}>Candidaturas Recebidas</Text>
       {candidaturas.length === 0 ? (
-        <Text style={[styles.info, {textAlign: 'center', marginTop: 20}]}>
+        <Text style={[styles.info, { textAlign: 'center', marginTop: 20 }]}>
           Nenhuma candidatura recebida
         </Text>
       ) : (
@@ -80,10 +91,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   titulo: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: colors.tituloAmarelo,
-    marginBottom: 8,
+    marginBottom: 5,
+    color: colors.tituloBranco
   },
   info: {
     fontSize: 16,
