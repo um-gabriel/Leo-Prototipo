@@ -81,6 +81,7 @@ export function TxtInput({ ...rest }: TextInputProps) {
         height: 55,
         paddingLeft: 30,
         borderColor: colors.amarelo2,
+        color: 'white',
         borderWidth: 1.2,
         borderRadius: 8,
         fontSize: 16,

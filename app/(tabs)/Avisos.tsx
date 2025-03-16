@@ -26,7 +26,7 @@ export default function Avisos() {
             uid_criadorVaga: data.uidCriadorVaga,
             nome_vaga: data.nome_vaga,
             status: data.status || 'Pendente',
-            candidato_name: data.nome_candidato,
+            nome_candidato: data.nome_candidato,
             dataCandidatura: data.createdAt ? data.createdAt.toDate() : new Date(),
           });
         }); 
@@ -46,7 +46,7 @@ export default function Avisos() {
         <Text style={{ color: colors.amarelo2 }}>Status:</Text> {item.status}
       </Text>
       <Text style={styles.info}>
-        <Text style={{ color: colors.amarelo2 }}>Candidato:</Text> {item.candidato_name}
+        <Text style={{ color: colors.amarelo2 }}>Candidato:</Text> {item.nome_candidato}
       </Text>
       <Text style={styles.info}>
         <Text style={{ color: colors.amarelo2 }}>Data:</Text> {new Date(item.dataCandidatura).toLocaleDateString('pt-BR')}

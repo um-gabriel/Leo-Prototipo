@@ -53,7 +53,7 @@ export interface CandidaturaVaga {
     uid_criadorVaga: string;
     nome_vaga: string;
     status: string;
-    candidato_name: string;
+    nome_candidato: string;
     dataCandidatura: Date;
 }
 
