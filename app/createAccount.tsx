@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '@/src/firebase/config';
@@ -9,6 +9,8 @@ import { Picker } from '@react-native-picker/picker';
 import { colors } from '@/src/components/global';
 import { FormPessoa } from '@/src/firebase/forms/formPessoa';
 import { FormEmpresa } from '@/src/firebase/forms/formEmpresa';
+import { StatusBarObject } from '@/src/components/objects';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function CreateAccount() {
   const router = useRouter();
@@ -37,10 +39,17 @@ export default function CreateAccount() {
     }
   }
 
+  function Back() {
+    router.replace('/')
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.preto }}>
+      <StatusBarObject />
+      
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={Style.cardTop}>
+          <AntDesign name="caretleft" size={30} color={colors.amarelo2} onPress={ () => Back()} style={{ right: 160, marginBottom: 10 }} />
           <Text style={Style.Title}>Criar Conta</Text>
         </View>
 

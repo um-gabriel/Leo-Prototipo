@@ -6,6 +6,7 @@ import { Users, Vagas, width, height, Empresas } from '@/src/firebase/functions/
 import { useRouter } from 'expo-router';
 import { dados_usuario, userVagas } from '@/src/firebase/functions/get/getInforUser';
 import { handleDeleteVaga } from '@/src/firebase/functions/delete/deleteJob';
+import { StatusBarObject } from '@/src/components/objects';
 
 export default function Account() {
   const [usersData, setUsersData] = useState<Users[]>([]);
@@ -109,6 +110,8 @@ export default function Account() {
 
   return (
     <View style={styles.container}>
+      <StatusBarObject />
+      
       <ScrollView>
         {tipoConta === 'Empresa' ? (
           <FlatList data={filteredUsersData} keyExtractor={(item) => item.uid} renderItem={renderUserEmpresa} scrollEnabled={false} />

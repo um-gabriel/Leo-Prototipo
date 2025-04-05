@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Link, useRouter } from 'expo-router';
-import { TxtInput, Botão } from '../src/components/objects';
+import { TxtInput, Botão, StatusBarObject } from '../src/components/objects';
 import { colors } from '@/src/components/global';
 import { width } from '@/src/firebase/functions/interface';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/src/firebase/config';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function Login() {
   const router = useRouter();
@@ -28,9 +29,16 @@ export default function Login() {
     }
   }
 
+  function Back() {
+    router.replace('/')
+  }
+
   return (
     <View style={styles.container}>
+      <StatusBarObject />
+
       <View style={styles.cardTop}>
+        <AntDesign name="caretleft" size={30} color={colors.amarelo2} onPress={ () => Back()} style={{ right: 160, marginBottom: 10 }} />
         <Text style={styles.cardTop_Title}>Go 2 Work</Text>
         <Text style={styles.cardTop_subTitle}>Volte para encontrar novas oportunidades.</Text>
       </View>
@@ -67,7 +75,7 @@ export default function Login() {
 
         <Text style={styles.textBottom}>
           Não tem conta?{' '}
-          <Link href="/" style={styles.links}>
+          <Link href="/createAccount" style={styles.links}>
             Crie aqui agora!
           </Link>
         </Text>

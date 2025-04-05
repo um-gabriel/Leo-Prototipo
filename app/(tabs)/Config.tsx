@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { colors } from '@/src/components/global';
-import { TxtInput, Botão, BotãoInicio } from '@/src/components/objects';
+import { TxtInput, Botão, BotãoInicio, StatusBarObject } from '@/src/components/objects';
 import { verification, width } from '@/src/firebase/functions/interface';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/src/firebase/config';
@@ -28,6 +28,8 @@ export default function Config() {
     } catch (error) {
       console.error("Erro ao atualizar o documento:", error);
       Alert.alert("Erro", "Não foi possível atualizar o documento.");
+    } finally {
+      console.log("A função update foi feita!")
     }
   };
 
@@ -37,6 +39,8 @@ export default function Config() {
 
   return (
     <View style={styles.container}>
+      <StatusBarObject />
+
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Configurações</Text>
         <Text style={styles.subtitle}>Personalize sua experiência</Text>

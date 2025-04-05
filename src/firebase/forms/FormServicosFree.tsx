@@ -4,7 +4,7 @@ import { Botão } from '@/src/components/objects';
 import { colors } from '@/src/components/global';
 import { width } from '@/src/firebase/functions/interface';
 
-export default function FormVagaCLT() {
+export default function FormServicosFree() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
@@ -17,7 +17,7 @@ export default function FormVagaCLT() {
 
   return (
     <View style={styles.form}>
-      <Campo label="Nome da Vaga" valor="Auxiliar Administrativo" />
+      <Campo label="Nome dbdfvbdfa Vaga" valor="Auxiliar Administrativo" />
       <Campo label="Empresa" valor="Tech Solutions Ltda." />
       <Campo label="Salário" valor="R$ 2.500" />
       <Campo label="Localização" valor="Belo Horizonte - MG" />

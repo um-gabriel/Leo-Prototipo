@@ -9,7 +9,7 @@ import { db } from '@/src/firebase/config';
 import { colors } from '@/src/components/global';
 import { Empresas, Freelancer, height, Users, width } from '@/src/firebase/functions/interface';
 import { useRouter } from 'expo-router';
-import { BotaoInicio } from '@/src/components/objects';
+import { BotaoInicio, StatusBarObject } from '@/src/components/objects';
 import { fetchEmpresas } from '@/src/firebase/functions/get/getCompany';
 import { getFreelancerVagas } from '@/src/firebase/functions/get/getJobs';
 
@@ -116,6 +116,8 @@ export default function Others() {
 
   return (
     <ScrollView style={{ backgroundColor: colors.fundo }}>
+      <StatusBarObject />
+
       <View style={styles.container}>
 
         <Text style={styles.sectionTitle}>Empresas</Text>
@@ -189,6 +191,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     paddingBottom: 80,
+    textAlign: 'center'
   },
   sectionTitle: {
     fontSize: 28,
@@ -210,9 +213,10 @@ const styles = StyleSheet.create({
     width: 180,
     backgroundColor: colors.cinza,
     borderRadius: 12,
-    padding: 10,
+    padding: 15,
     marginRight: 10,
     marginTop: 10,
+    alignItems: 'center'
   },
   empresaTitulo: {
     color: colors.tituloBranco,
