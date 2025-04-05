@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { colors } from '@/src/components/global';
 import FormVagaCLT from '@/src/firebase/forms/FormVagaCLT'; // componente de vaga CLT
-import FormFreelancer from '@/src/firebase/forms/FormVagaCLT copy'; // componente de serviço freelancer
+import FormFreelancer from '@/src/firebase/forms/FormServicosFree'; // componente de serviço freelancer
+import { StatusBarObject } from '@/src/components/objects';
+import FormServicosFree from '@/src/firebase/forms/FormServicosFree';
 
 export default function CreateService() {
   const [selectedForm, setSelectedForm] = useState<'clt' | 'freela'>('clt');
 
   return (
     <View style={styles.container}>
+      <StatusBarObject />
+
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, selectedForm === 'clt' && styles.tabSelected]}
@@ -25,7 +29,7 @@ export default function CreateService() {
       </View>
 
       <View style={styles.formContainer}>
-        {selectedForm === 'clt' ? <FormVagaCLT /> : <FormFreelancer />}
+        {selectedForm === 'clt' ? <FormVagaCLT /> : <FormServicosFree />}
       </View>
     </View>
   );

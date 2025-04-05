@@ -12,6 +12,7 @@ import { colors } from '@/src/components/global';
 import { useGlobalSearchParams } from 'expo-router';
 import { height, Vagas, width } from '@/src/firebase/functions/interface';
 import { fetchJobs_Geral } from '@/src/firebase/functions/get/getJobs';
+import { StatusBarObject } from '@/src/components/objects';
 
 export default function Geral() {
   const { coleção, campo, valor, coleçãoUnica } = useGlobalSearchParams();
@@ -69,6 +70,8 @@ export default function Geral() {
 
   return (
     <View style={styles.container}>
+      <StatusBarObject />
+
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View style={styles.containerTop}>
           <TextInput

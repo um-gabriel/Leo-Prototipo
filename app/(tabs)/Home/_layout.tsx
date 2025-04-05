@@ -10,11 +10,12 @@ export default function Layout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          position: 'relative',
-          paddingHorizontal: 20,
+          position: 'absolute',
+          width: '95%', height: 70, 
+          margin: 10, marginBottom: 20,  paddingHorizontal: 20,
           justifyContent: "center",
-          height: 70, // altura da tab
-          backgroundColor: colors.fundo, // cor de fundo da tab
+          borderRadius: 15,
+          backgroundColor: colors.fundo2, // cor de fundo da tab
         },
 
         // tabBarShowLabel: false, // opcional: para esconder os labels das tabs

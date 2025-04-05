@@ -1,4 +1,4 @@
-import { TouchableOpacity, TouchableOpacityProps } from "react-native"
+import { StatusBar, StatusBarProps, TouchableOpacity, TouchableOpacityProps } from "react-native"
 import { colors } from "./global"
 import { TextInput, TextInputProps } from "react-native"
 import { width } from "../firebase/functions/interfaces"
@@ -109,5 +109,16 @@ export function TextArea({ ...rest }: TextInputProps) {
       }}
       {...rest}
     />
+  )
+}
+
+
+export function StatusBarObject({ ...rest }: StatusBarProps) {
+  return (
+      <StatusBar
+        barStyle="light-content" // ou "dark-content"
+        backgroundColor={colors.preto} // fundo da 
+        {...rest}
+      />
   )
 }

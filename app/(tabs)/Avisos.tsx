@@ -4,6 +4,7 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db, auth } from '@/src/firebase/config';
 import { colors } from '@/src/components/global';
 import { CandidaturaVaga, verification } from '@/src/firebase/functions/interface';
+import { StatusBarObject } from '@/src/components/objects';
 
 export default function Avisos() {
   const [candidaturas, setCandidaturas] = useState<CandidaturaVaga[]>([]);
@@ -56,6 +57,8 @@ export default function Avisos() {
 
   return (
     <View style={styles.container}>
+      <StatusBarObject />
+
       <Text style={styles.header}>Candidaturas Recebidas</Text>
       {candidaturas.length === 0 ? (
         <Text style={[styles.info, { textAlign: 'center', marginTop: 20 }]}>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Feather, FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { colors } from '@/src/components/global';
-import { BotãoInicio } from '@/src/components/objects';
+import { BotãoInicio, StatusBarObject } from '@/src/components/objects';
 import { useRouter } from 'expo-router';
 import { width, height, Vagas, verification } from '@/src/firebase/functions/interface';
 import { getVagas } from '@/src/firebase/functions/get/getJobs';
@@ -34,6 +34,8 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
+      <StatusBarObject />
+      
       <ScrollView>
         <View style={styles.AreaTop}>
           <Text style={styles.AreaTop_Title}>Go 2 Work</Text>

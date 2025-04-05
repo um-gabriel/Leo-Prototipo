@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { colors } from '../src/components/global';
+import { StatusBarObject } from '../src/components/objects';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,7 +15,7 @@ export default function Index() {
 
   useEffect(() => {
     const loadData = async () => {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       setLoading(false);
     };
     loadData();
@@ -31,6 +32,8 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
+      <StatusBarObject />
+      
       <View style={styles.bottomContainer}>
         <Text style={styles.Title}>Go 2 Work</Text>
         <Text style={styles.subTitle}>Criado pela Thinking Light</Text>

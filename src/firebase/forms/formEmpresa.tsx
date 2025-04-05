@@ -3,7 +3,7 @@ import { colors } from '@/src/components/global';
 import { Botão, TxtInput } from '@/src/components/objects';
 import { auth, db } from '@/src/firebase/config';
 import { height, width } from '@/src/firebase/functions/interface';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
@@ -155,6 +155,11 @@ export const FormEmpresa = () => {
             </Botão>
           </View>
         )}
+
+        <Text style={styles.lowText}>
+          Deseja fazer login?
+          <Link href='/login' style={{color: colors.amarelo1}}> Clique aqui</Link>
+        </Text>
       </View>
     </View>
   );
@@ -200,4 +205,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 0,
   },
+  lowText: {
+    fontSize: 17,
+    color: colors.tituloBranco,
+    marginBottom: 20,
+ },
 });
