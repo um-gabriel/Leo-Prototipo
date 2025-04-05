@@ -1,364 +1,194 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Feather, FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { colors } from '@/src/components/global';
 import { BotãoInicio } from '@/src/components/objects';
 import { useRouter } from 'expo-router';
-import { height, Vagas, verification, width } from '@/src/firebase/functions/interface';
-import { Feather, FontAwesome6, MaterialIcons } from '@expo/vector-icons';
+import { width, height, Vagas, verification } from '@/src/firebase/functions/interface';
 import { getVagas } from '@/src/firebase/functions/get/getJobs';
 import { handleAddVagaCLT } from '@/src/firebase/functions/create/createCandidatura';
 
 export default function Home() {
-  const [jobs, setJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [jobs, setJobs] = useState<Vagas[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  
-  // Função para enviar dados através das telas
-  const boxSetores = (coleção: any, campo: any, valor: any) => {
+
+  const boxSetores = (coleção: string, campo: string, valor: string) => {
     router.push(`../Geral?coleção=${coleção}&campo=${campo}&valor=${valor}`);
   };
 
-  const CriarVagas = (coleçãoUnica: any) => {
+  const CriarVagas = (coleçãoUnica: string) => {
     router.push(`../Geral?coleção=${coleçãoUnica}`);
   };
 
   useEffect(() => {
-    const DadosJobs = { setJobs, setFilteredJobs, setLoading };
-    getVagas(DadosJobs);
+    getVagas({ setJobs, setFilteredJobs: setJobs, setLoading });
   }, []);
-  
-  // Renderização dos itens das vagas
-  const renderItem = ({ item }: { item: Vagas }) => {
-    console.log(item); // Verifique o objeto item
 
-    // Verifique se os valores necessários estão definidos
-    if (!item.id || !item.uid_criadorVaga) {
-      return (
-        <View style={stylesVagas.item}>
-          <Text style={stylesVagas.title}>Vaga inválida</Text>
-        </View>
-      );
-    }
-
-    return (
-      <View style={stylesVagas.item}>
-        <Text style={stylesVagas.title}>{item.name_vaga}</Text>
-        <Text style={stylesVagas.subTitle}>{item.empresa}</Text>
-        <View style={stylesVagas.box_mode}>
-          <Text style={stylesVagas.mode}>Salário: R$</Text>
-          <Text style={stylesVagas.mode}>{item.salario}</Text>
-        </View>
-        <View style={stylesVagas.box_mode}>
-          <Text style={stylesVagas.mode}>Modalidades:</Text>
-          <Text style={stylesVagas.mode}>{item.modalidades}</Text>
-        </View>    
-        <View style={stylesVagas.box_mode}>
-          <Text style={stylesVagas.mode}>Contato:</Text>
-          <Text style={stylesVagas.mode}>{item.gmail}</Text>
-        </View>
-        <View style={stylesVagas.box_mode}>
-          <Text style={stylesVagas.mode}>Localização:</Text>
-          <Text style={stylesVagas.mode}>{item.localizacao}</Text>
-        </View>   
-        <TouchableOpacity 
-          style={stylesVagas.buttonCandidatar}
-          onPress={async () => {
-            const userVerification = verification();
-            if (!userVerification || !userVerification.uid) {
-              alert('Erro: Usuário não autenticado');
-              return;
-            }
-            try {
-              await handleAddVagaCLT({
-                userId: userVerification.uid,
-                uidCriadorVaga: item.uid_criadorVaga,
-                nome_vaga: item.name_vaga,
-                nome_candidato: userVerification.name_conta,
-                setLoading: setLoading
-              });
-              alert('Candidatura realizada com sucesso!');
-            } catch (error) {
-              console.error('Erro ao candidatar-se:', error);
-              alert('Erro ao realizar candidatura. Tente novamente.');
-            }
-          }}
-        >
-          <Text style={stylesVagas.buttonText}>Candidatar-se</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const TextInfo = ({ label, value }: { label: string; value: string }) => (
+    <View style={stylesVaga.box_mode}>
+      <Text style={stylesVaga.mode}>{label}</Text>
+      <Text style={stylesVaga.mode}>{value}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollArea}>
-
+      <ScrollView>
         <View style={styles.AreaTop}>
-          <View style={styles.AreaTop_container}>
-              <Text style={styles.AreaTop_Title}>Go 2 Work</Text>
-              <Text style={styles.AreaTop_subTitle}>Encontre uma experiençia que pode mudar sua vida bem aqui.</Text>
-          </View>
-        </View>
-        
-        <View style={styles.containerBoxs}> //Area de box para setores
-            <View style={styles.containerBoxs_Areas}> //Generos de vagas
-            <Text style={styles.SubTitle}>Areas de vagas</Text>
-            <View style={styles.AreaContainerEmpresas}>
-
-              <ScrollView  showsVerticalScrollIndicator={false}>
-                  <TouchableOpacity style={styles.BoxContainerEmpresas} onPress={
-                    //Ao clicar no box, vc envia a função boxSetores um 3 valores para servir na busca da pesquisa q vc clicou
-                    () => boxSetores('Vagas-trabalho', 'setor', 'Saude')
-                  } >
-                    <View style={styles.boxImage}>
-                        <MaterialIcons name="health-and-safety" size={27} color={colors.amarelo2} />
-                    </View>
-                    <Text style={styles.BoxContainerEmpresas_text}>Saúde</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.BoxContainerEmpresas} onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Magia e produção')}  >
-                    <View style={styles.boxImage}>
-                        <MaterialIcons name="computer" size={27} color={colors.amarelo2} />
-                    </View>
-                    <Text style={styles.BoxContainerEmpresas_text}>TI</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.BoxContainerEmpresas} onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Engenharia')} >
-                    <View style={styles.boxImage}>
-                        <FontAwesome6 name="house-chimney" size={22} color={colors.amarelo2} />
-                    </View>
-                    <Text style={styles.BoxContainerEmpresas_text}>Engenharia</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.BoxContainerEmpresas} onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Educacao')} >
-                    <View style={styles.boxImage}>
-                        <Feather name="book" size={24} color={colors.amarelo2} />
-                    </View>
-                    <Text style={styles.BoxContainerEmpresas_text}>Educação</Text>
-                  </TouchableOpacity>
-              </ScrollView>
-            </View>
-            </View>
-
-            <View style={styles.BoxContainer}>
-              <View style={styles.FlatListBox}> //VAGAS DE EMPREGO
-                  <Text style={styles.SubTitle}>Vagas de emprego</Text>
-                  {loading ? (
-                    <ActivityIndicator size="large" color={colors.amarelo1} />
-                  ) : (
-                    <FlatList
-                      data={filteredJobs}
-                      keyExtractor={(item) => item.id}
-                      renderItem={renderItem}
-                      scrollEnabled={false} // Previne conflitos de rolagem com o ScrollView
-                    />
-                  )}
-              </View>
-              <View style={styles.areaButton}>  //BOTÃO DE VER MAIS
-                  <BotãoInicio onPress={() => CriarVagas('Vagas-trabalho')} > 
-                      <Text style={styles.TextButton}>Clique aqui para ver mais</Text>
-                  </BotãoInicio>
-              </View>
-            </View>
-
-            <View style={styles.BoxContainer}> //SEGUNDA PARTE DE VAGAS
-              <View style={styles.FlatListBox}>
-                  <Text style={styles.SubTitle}>Vagas de relacionadas a tecnologia:</Text>
-                  {loading ? (
-                    <ActivityIndicator size="large" color={colors.amarelo1} />
-                  ) : (
-                    <FlatList
-                      data={filteredJobs}
-                      keyExtractor={(item) => item.id}
-                      renderItem={renderItem}
-                      scrollEnabled={false} // Previne conflitos de rolagem com o ScrollView
-                    />
-                  )}
-              </View>
-              <View style={styles.areaButton}>
-                  <BotãoInicio onPress={() => CriarVagas('Vagas-trabalho')} >
-                      <Text style={styles.TextButton}>Clique aqui para ver mais</Text>
-                  </BotãoInicio>
-              </View>
-            </View>
-          
-            <View style={styles.fim}></View>
-
+          <Text style={styles.AreaTop_Title}>Go 2 Work</Text>
+          <Text style={styles.AreaTop_subTitle}>
+            Encontre uma experiência que pode mudar sua vida bem aqui.
+          </Text>
         </View>
 
+        <View style={styles.content}>
+        <Text style={styles.SubTitle}>Áreas de vagas</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <TouchableOpacity
+            style={styles.BoxContainerEmpresas}
+            onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Saude')}
+          >
+            <View style={styles.boxImage}>
+              <MaterialIcons name="health-and-safety" size={27} color={colors.amarelo2} />
+            </View>
+            <Text style={styles.BoxContainerEmpresas_text}>Saúde</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.BoxContainerEmpresas}
+            onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Magia e produção')}
+          >
+            <View style={styles.boxImage}>
+              <MaterialIcons name="computer" size={27} color={colors.amarelo2} />
+            </View>
+            <Text style={styles.BoxContainerEmpresas_text}>TI</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.BoxContainerEmpresas}
+            onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Engenharia')}
+          >
+            <View style={styles.boxImage}>
+              <FontAwesome6 name="house-chimney" size={22} color={colors.amarelo2} />
+            </View>
+            <Text style={styles.BoxContainerEmpresas_text}>Engenharia</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.BoxContainerEmpresas}
+            onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Educacao')}
+          >
+            <View style={styles.boxImage}>
+              <Feather name="book" size={24} color={colors.amarelo2} />
+            </View>
+            <Text style={styles.BoxContainerEmpresas_text}>Educação</Text>
+          </TouchableOpacity>
+        </ScrollView>
+
+          <Text style={styles.SubTitle}>Vagas de emprego</Text>
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.amarelo1} />
+          ) : (
+            jobs.map((item) => (
+              <View key={item.id} style={stylesVaga.item}>
+                <Text style={stylesVaga.title}>{item.name_vaga}</Text>
+                <Text style={stylesVaga.subTitle}>{item.empresa}</Text>
+                <TextInfo label="Salário: R$" value={item.salario} />
+                <TextInfo label="Modalidades:" value={item.modalidades} />
+                <TextInfo label="Contato:" value={item.gmail} />
+                <TextInfo label="Localização:" value={item.localizacao} />
+                <TouchableOpacity
+                  style={stylesVaga.buttonCandidatar}
+                  onPress={async () => {
+                    const user = verification();
+                    if (!user?.uid) return alert('Erro: Usuário não autenticado');
+                    try {
+                      await handleAddVagaCLT({
+                        userId: user.uid,
+                        uidCriadorVaga: item.uid_criadorVaga,
+                        nome_vaga: item.name_vaga,
+                        nome_candidato: user.name_conta,
+                        setLoading,
+                      });
+                      alert('Candidatura realizada com sucesso!');
+                    } catch (error) {
+                      alert('Erro ao realizar candidatura.');
+                      console.error(error);
+                    }
+                  }}
+                >
+                  <Text style={stylesVaga.buttonText}>Candidatar-se</Text>
+                </TouchableOpacity>
+              </View>
+            ))
+          )}
+          <BotãoInicio onPress={() => CriarVagas('Vagas-trabalho')}>
+            <Text style={styles.TextButton}>Clique aqui para ver mais</Text>
+          </BotãoInicio>
+        </View>
       </ScrollView>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.fundo,
-    alignItems: 'center',
-  },
-  scrollArea: {
-    flex: 1,
-  },
-  //TOP AREA
-  AreaTop:{
-    width: width * 1,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    height: height * 0.17,
+  container: { flex: 1, backgroundColor: colors.preto },
+  AreaTop: {
+    padding: 25,
     backgroundColor: colors.fundo2,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderBottomLeftRadius: 50, borderBottomRightRadius: 50,
+    alignItems: 'center', justifyContent: 'center'
   },
-  AreaTop_container: {
-    maxWidth: width * 0.9,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  AreaTop_Title: {
-    fontSize: 40,
-    marginBottom: 5,
-    color: colors.amarelo2,
-    fontWeight: '600'
-  },
-  AreaTop_subTitle: {
-    fontSize: 15,
-    textAlign: 'center',
-    color: colors.tituloBranco,
-  },
-
-  //OUTROS ELEMENTOS
-  containerBoxs: {
-    padding: 15,
-    width: width * 1,
-    alignItems: 'center'
-  },
-  BoxContainer: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  containerBoxs_Areas: {
-    width: '94%',
-    minHeight: 120,
-    backgroundColor: colors.fundo,
-    alignItems: 'center',
-  },
-  SubTitle: {
-    fontSize: 25,
-    marginTop: 15,
-    marginBottom: 10,
-    fontWeight: 'bold',
-    color: colors.tituloBranco,
-  },
-  AreaContainerEmpresas: {
-    width: "100%",
-    minHeight: 270,
-    alignItems: 'center',
-    backgroundColor: colors.cinza,
-    marginTop: 10,
-    borderRadius: 30,
-  },
+  AreaTop_Title: { fontSize: 40, color: colors.amarelo2, fontWeight: '600' },
+  AreaTop_subTitle: { fontSize: 15, color: colors.tituloBranco, textAlign: 'center' },
+  content: { padding: 15, alignItems: 'center' },
   BoxContainerEmpresas: {
-    width: '100%',
-    height: 70,
-    flexDirection: 'row',
-    alignItems: "center",
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 15,
+    backgroundColor: colors.fundo2,
+    borderRadius: 15,
+    padding: 10,
+    width: 100,
+    height: 100,
   },
   BoxContainerEmpresas_text: {
-    fontSize: 22,
-    marginRight: 130,
-    left: 20,
     color: colors.tituloBranco,
+    fontSize: 14,
+    marginTop: 5,
+    textAlign: 'center',
+  },
+  SubTitle: { fontSize: 25, fontWeight: 'bold', color: colors.tituloBranco, marginVertical: 15 },
+  BoxSetor: {
+    width: '100%', flexDirection: 'row', alignItems: 'center', marginBottom: 10
   },
   boxImage: {
-    width: 50,
-    backgroundColor: colors.fundo,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
-    borderRadius: 100,
+    width: 50, height: 50, borderRadius: 25,
+     alignItems: 'center', justifyContent: 'center'
   },
-  FlatListBox: {
-    width: "100%",
-    marginTop: 20,
-    borderRadius: 8,
-    marginBottom: 20,
-    alignItems: 'center'
-  },
-
-  //BOTÃO VER MAIS
-  areaButton: {
-    width: '100%',
-    height: 80,
-    top: -10,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.cinza,
-  },
-  TextButton: {
-    fontSize: 17,
-    color: colors.tituloBranco,
-    right: 10
-  },
-  fim: {
-    width: width * 1,
-    height: 100
-  }
+  BoxText: { fontSize: 20, color: colors.tituloBranco, marginLeft: 20 },
+  TextButton: { fontSize: 17, color: colors.tituloBranco, marginTop: 10 },
 });
 
-//VAGAS STYLES
-const stylesVagas = StyleSheet.create({ 
+const stylesVaga = StyleSheet.create({
   item: {
-    width: width * 0.9,
-    padding: 12,
-    paddingBottom: 14,
-    marginVertical: 8,
     backgroundColor: colors.cinza,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-    alignItems: 'center'
+    padding: 15, borderRadius: 8, marginVertical: 8,
+    width: width * 0.9, alignSelf: 'center', alignItems: 'center',
   },
-  title: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: colors.tituloBranco,
-  },
-  subTitle: {
-    fontSize: 21,
-    marginBottom: 10,
-    color: colors.tituloAmarelo,
-  },
-  text: {
-    fontSize: 16,
-    marginBottom: 2,
-    color: colors.tituloBranco,
-  },
+  title: { fontSize: 35, fontWeight: 'bold', color: colors.tituloBranco },
+  subTitle: { fontSize: 21, color: colors.tituloAmarelo, marginBottom: 10 },
   box_mode: {
-    width: '90%',
-    minHeight: 28,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    flexDirection: 'row', justifyContent: 'space-between',
+    width: '100%', marginBottom: 2
   },
-  mode: {
-    fontSize: 18,
-    color: colors.tituloBranco,
-  },
-
+  mode: { fontSize: 17, color: colors.tituloBranco, paddingInline: 10, },
   buttonCandidatar: {
     backgroundColor: colors.amarelo2,
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-    width: '70%',
-    alignItems: 'center',
+    padding: 10, borderRadius: 10, marginTop: 20,
+    alignItems: 'center'
   },
-  buttonText: {
-    color: colors.tituloBranco,
-    fontSize: 16,
-    //fontWeight: 'bold',
-  },
+  buttonText: { fontSize: 16, color: colors.tituloBranco },
 });
