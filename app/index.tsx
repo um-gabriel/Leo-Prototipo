@@ -1,61 +1,53 @@
-// 'PAGINA INICIAL'
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import { Link, useRouter } from 'expo-router'; // TENTANDO FAZER A NAVEGAÇÃO
+import { Text, View, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Link, useRouter } from 'expo-router';
 import { colors } from '../src/components/global';
-import { BotãoInicio } from '../src/components/objects';
-import { Dimensions } from 'react-native';
 
-// DIMENSÕES DA TELA Q CONVERSAMOS
 const { width, height } = Dimensions.get('window');
 
 export default function Index() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true); // Estado para controlar a tela de carregamento
+  const [loading, setLoading] = useState(true);
 
   const handleLoginPress = () => router.replace('/login');
   const handleCreateAccountPress = () => router.replace('/createAccount');
 
-  // Efeito para animar a entrada ao montar o componente
-    useEffect(() => {
-    // Simula um carregamento
+  useEffect(() => {
     const loadData = async () => {
-      // Simule um atraso para a tela de carregamento
-      await new Promise(resolve => setTimeout(resolve, 4000)); // 2 segundos
-      setLoading(false); // Oculta a tela de carregamento
-    }; loadData();
-    })
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setLoading(false);
+    };
+    loadData();
+  }, []);
 
-
-  // if (loading) {
-  //   // Tela de carregamento
-  //   return (
-  //     <View style={styles.loadingContainer}>
-  //       <ActivityIndicator size="large" color={colors.amarelo1} />
-  //       <Text style={styles.loadingText}>Carregando...</Text>
-  //     </View>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.amarelo1} />
+        <Text style={styles.loadingText}>Carregando...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}></View>
-
       <View style={styles.bottomContainer}>
-        <View style={styles.areaButton}>
-          <BotãoInicio onPress={handleLoginPress}>
-            <Text style={styles.buttonText}>
-              Entre na sua conta              
-            </Text>
-          </BotãoInicio>
-          <BotãoInicio onPress={handleCreateAccountPress}>
-            <Text style={styles.buttonText}>
-              Crie sua conta
-            </Text>
-          </BotãoInicio>
+        <Text style={styles.Title}>Go 2 Work</Text>
+        <Text style={styles.subTitle}>Criado pela Thinking Light</Text>
+
+        <View style={styles.viewButton}>
+          <View style={styles.areaButton}>
+            <TouchableOpacity style={styles.buttonLogin} onPress={handleLoginPress}>
+              <Text style={styles.buttonText}>Entre na sua conta</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.buttonCreate} onPress={handleCreateAccountPress}>
+              <Text style={styles.buttonText2}>Crie sua conta</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <Link href={'/(tabs)/Home/Home'} style={styles.linkText}>
+        <Link href="/(tabs)/Home/Home" style={styles.linkText}>
           Entrar em uma conta
         </Link>
       </View>
@@ -68,41 +60,79 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#242424'
+    backgroundColor: colors.preto
   },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#242424'
+  Title: {
+    fontSize: 50,
+    color: colors.amarelo2,
+    fontWeight: '700'
   },
-  loadingText: {
-    color: '#fff',
-    marginTop: 10,
+  subTitle: {
     fontSize: 18,
-  },
-  topContainer: {
-    height: height * 0.6
+    color: colors.tituloBranco,
   },
   bottomContainer: {
-    width: width * 1,
-    height: height * 0.4,
+    width: width * 0.9,
+    padding: 20,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   areaButton: {
-    width: width * 1,
-    height: 180,
+    width: width * 0.9,
+    height: 160,
     justifyContent: 'space-around',
     alignItems: 'center'
+  },
+  viewButton: {
+    marginTop: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    height: 200,
+  },
+  buttonLogin: {
+    width: '90%',
+    height: 60,
+    backgroundColor: colors.amarelo2,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  buttonCreate: {
+    width: '90%',
+    height: 60,
+    borderRadius: 20,
+    borderWidth: 3,
+    borderColor: colors.amarelo2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   buttonText: {
     fontSize: 20,
     color: colors.preto,
+    fontWeight: '500',
+  },
+  buttonText2: {
+    fontSize: 20,
+    color: colors.amarelo2,
+    fontWeight: '500',
   },
   linkText: {
     fontSize: 18,
     color: '#fff',
     marginTop: 10
-  }
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.preto,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: colors.amarelo1,
+  },
 });

@@ -1,62 +1,50 @@
-import React, { useState }  from 'react';
+import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Link, useRouter } from 'expo-router';
-import { TxtInput } from '../src/components/objects';
-import { Botão } from '../src/components/objects';
+import { TxtInput, Botão } from '../src/components/objects';
 import { colors } from '@/src/components/global';
 import { width } from '@/src/firebase/functions/interface';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/src/firebase/config';
-import { connectFirestoreEmulator } from 'firebase/firestore';
 
 export default function Login() {
-  const router = useRouter(); // Rotas
+  const router = useRouter();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   async function login() {
-      try {
-        setIsLoading(true)
-        signInWithEmailAndPassword(auth, email, password)
-          .then(value => {
-              console.log("Login realizado com sucesso! Seja bem vindo \n" + value.user.uid + " - " + email);
-              Alert.alert("Login bem sucedido!", "Seja bem vindo de volta")
-              router.replace('/(tabs)/Home/Home')
-          })
-          .catch((error) => console.log(error.message)); // Corrigido aqui: melhor tratamento de erro 
-      } 
-      catch(erro) {
-        console.error("Erro antes de iniciar  a função")
-        Alert.alert("Erro no login")
-      } 
-      finally {
-        console.log("Função login realizada")
-        setIsLoading(false)
-      }
-  };
-
-  // const handleRecoveryPress = async () => {
-  //   const valueRecovery = { email };
-  //   await handleRecovery(valueRecovery);
-  // };
+    try {
+      setIsLoading(true);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      console.log("Login realizado com sucesso:", result.user.uid);
+      Alert.alert("Login bem-sucedido!", "Seja bem-vindo de volta!");
+      router.replace('/(tabs)/Home/Home');
+    } catch (error: any) {
+      console.error("Erro ao fazer login:", error.message);
+      Alert.alert("Erro no login", error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
-    <View style={Style.container}>
-      <View style={Style.cardTop}>
-          <Text style={Style.cardTop_Title}>Go 2 Work</Text>
-          <Text style={Style.cardTop_subTitle}>Volte a para encontrar novos interreses.</Text>
+    <View style={styles.container}>
+      <View style={styles.cardTop}>
+        <Text style={styles.cardTop_Title}>Go 2 Work</Text>
+        <Text style={styles.cardTop_subTitle}>Volte para encontrar novas oportunidades.</Text>
       </View>
 
-      <View style={Style.cardBottom}>
-        <Text style={Style.cardBottom_text}>Digite seu email:</Text>
+      <View style={styles.cardBottom}>
+        <Text style={styles.cardBottom_text}>Digite seu email:</Text>
         <TxtInput 
           placeholder="Email"
           value={email}
           placeholderTextColor={colors.tituloBranco}
           onChangeText={setEmail}
         />
-        <Text style={Style.cardBottom_text}>Digite sua senha:</Text>
+
+        <Text style={styles.cardBottom_text}>Digite sua senha:</Text>
         <TxtInput
           placeholder="Senha"
           placeholderTextColor={colors.tituloBranco}
@@ -64,20 +52,23 @@ export default function Login() {
           value={password}
           onChangeText={setPassword}
         />
-        <TouchableOpacity /*onPress={() => RecuperarSenha}*/>
-           <Text style={Style.cardBottom_recovery}>Deseja recuperar sua senha?</Text>
+
+        <TouchableOpacity /* onPress={handleRecoveryPress} */>
+          <Text style={styles.cardBottom_recovery}>Deseja recuperar sua senha?</Text>
         </TouchableOpacity>
+
         {isLoading ? (
           <ActivityIndicator size="large" color={colors.amarelo1} />
         ) : (
-          <Botão activeOpacity={0.8} onPress={login} >
+          <Botão activeOpacity={0.8} onPress={login}>
             <Text style={{ fontSize: 18, color: colors.tituloBranco }}>Entrar</Text>
           </Botão>
-        )} 
-        <Text style={Style.textBottom}>
-          Não tem conta? 
-          <Link href="/" style={Style.links}>
-            crie aqui agora!
+        )}
+
+        <Text style={styles.textBottom}>
+          Não tem conta?{' '}
+          <Link href="/" style={styles.links}>
+            Crie aqui agora!
           </Link>
         </Text>
       </View>
@@ -85,7 +76,7 @@ export default function Login() {
   );
 }
 
-const Style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -93,10 +84,9 @@ const Style = StyleSheet.create({
   },
   cardTop: {
     height: '24%',
-    width: width * 1,
+    width: width,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    // backgroundColor: 'red'
   },
   cardTop_Title: {
     fontSize: 50,
@@ -108,6 +98,7 @@ const Style = StyleSheet.create({
     fontSize: 17,
     color: colors.tituloBranco,
     marginBottom: 20,
+    textAlign: 'center'
   },
   cardBottom: {
     minHeight: '65%',
@@ -132,11 +123,12 @@ const Style = StyleSheet.create({
   },
   textBottom: {
     fontSize: 18,
-    top: 80,
+    marginTop: 40,
     color: colors.tituloBranco,
-    justifyContent: "space-around",
+    textAlign: 'center',
   },
   links: {
     color: colors.amarelo1,
+    fontWeight: '600',
   },
 });

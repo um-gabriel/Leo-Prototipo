@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '@/src/components/global';
 import { Users, Vagas, width, height, Empresas } from '@/src/firebase/functions/interface';
@@ -22,10 +22,9 @@ export default function Account() {
 
     const passData = { setUsersData, setFilteredUsersData, setTipoConta, setLoading }
     dados_usuario(passData);
-    
+
     const vagaId = { filteredVagas }
     handleDeleteVaga(vagaId);
-
   }, []);
 
   if (loading) {
@@ -35,7 +34,7 @@ export default function Account() {
         <Text>Loading...</Text>
       </View>
     );
-  };
+  }
 
   const renderUserEmpresa = ({ item }: { item: Empresas }) => (
     <View style={styles.data}>
@@ -45,27 +44,15 @@ export default function Account() {
       </View>
       <View style={styles.areaLow}>
         <View style={styles.areaLow_top}>
-        <View style={styles.areaLow_areaInfor}>
+          <View style={styles.areaLow_areaInfor}>
             <Text style={styles.areaLow_top_text}>Informações da conta</Text>
-            <AntDesign name="rightcircle" size={30} color={colors.amarelo2} style={{left: 4}} /*onPress={() => router.replace('/(tabs)/configurações/Perfil')}*//>
+            <AntDesign name="rightcircle" size={30} color={colors.amarelo2} />
           </View>
         </View>
-        <View style={styles.areaLow_low}>
-            <Text style={styles.areaLow_low_text}>Contato: </Text>
-            <Text style={styles.areaLow_low_text2}>{item.gmail}</Text>
-        </View>
-        <View style={styles.areaLow_low}>
-            <Text style={styles.areaLow_low_text}>Setor: </Text>
-            <Text style={styles.areaLow_low_text2}>{item.setor}</Text>
-        </View>
-        <View style={styles.areaLow_low}>
-            <Text style={styles.areaLow_low_text}>Cnpj: </Text>
-            <Text style={styles.areaLow_low_text2}>{item.cnpj}</Text>
-        </View>
-        <View style={styles.areaLow_low}>
-            <Text style={styles.areaLow_low_text}>Descrição: </Text>
-            <Text style={styles.areaLow_low_text2}>{item.cnpj}</Text>
-        </View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato: </Text><Text style={styles.areaLow_low_text2}>{item.gmail}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Setor: </Text><Text style={styles.areaLow_low_text2}>{item.setor}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Cnpj: </Text><Text style={styles.areaLow_low_text2}>{item.cnpj}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Descrição: </Text><Text style={styles.areaLow_low_text2}>{item.descricao}</Text></View>
       </View>
     </View>
   );
@@ -76,22 +63,17 @@ export default function Account() {
         <Text style={styles.title}>{item.name_conta}</Text>
         <Text style={styles.subTitle}>{item.gmail}</Text>
       </View>
-      <View style={styles.areaLow}> 
+      <View style={styles.areaLow}>
         <View style={styles.areaLow_top}>
           <View style={styles.areaLow_areaInfor}>
             <Text style={styles.areaLow_top_text}>Informações da conta</Text>
-            <AntDesign name="rightcircle" size={30} color={colors.amarelo2} style={{left: 4}} /*onPress={() => router.replace('/(tabs)/configurações/Perfil')}*/ />
+            <TouchableOpacity onPress={() => router.replace('/(tabs)/Config')} >
+                <AntDesign name="rightcircle" size={30} color={colors.amarelo2} />
+            </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.areaLow_low}>
-            <Text style={styles.areaLow_low_text}>Contato: </Text>
-            <Text style={styles.areaLow_low_text2}>{item.gmail}</Text>
-        </View>
-        <View style={styles.areaLow_low}>
-            <Text style={styles.areaLow_low_text}>Senha: </Text>
-            <Text style={styles.areaLow_low_text2}>{item.password}</Text>
-        </View>
-  
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato: </Text><Text style={styles.areaLow_low_text2}>{item.gmail}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Senha: </Text><Text style={styles.areaLow_low_text2}>{item.password}</Text></View>
       </View>
     </View>
   );
@@ -101,28 +83,21 @@ export default function Account() {
       <View style={stylesVagas.item_areaTitle}>
         <MaterialCommunityIcons name="information-outline" size={30} color="white" />
         <Text style={stylesVagas.title}>{item.name_vaga}</Text>
-        <MaterialCommunityIcons 
-          name="delete" 
-          size={30} 
-          color="red" 
+        <MaterialCommunityIcons
+          name="delete"
+          size={30}
+          color="red"
           onPress={() => {
             Alert.alert(
               "Delete Job Position",
               `Are you sure you want to delete "${item.name}"?`,
               [
-                {
-                  text: "Cancel",
-                  style: "cancel"
-                },
-                { 
-                  text: "Delete", 
-                  onPress: () => handleDeleteVaga(item.id),
-                  style: "destructive"
-                }
+                { text: "Cancel", style: "cancel" },
+                { text: "Delete", onPress: () => handleDeleteVaga(item.id), style: "destructive" }
               ]
             );
-          }} 
-        /> 
+          }}
+        />
       </View>
       <Text style={stylesVagas.text}>Salario: R$ {item.salario}</Text>
       <Text style={stylesVagas.text}>Empresa: {item.empresa}</Text>
@@ -135,47 +110,42 @@ export default function Account() {
   return (
     <View style={styles.container}>
       <ScrollView>
-      {tipoConta === 'Empresa' ? (
-          <FlatList
-            data={filteredUsersData}
-            keyExtractor={(item) => item.uid}
-            renderItem={renderUserEmpresa}
-            scrollEnabled={false}
-          />
+        {tipoConta === 'Empresa' ? (
+          <FlatList data={filteredUsersData} keyExtractor={(item) => item.uid} renderItem={renderUserEmpresa} scrollEnabled={false} />
         ) : tipoConta === 'Pessoa' ? (
-          <FlatList
-            data={filteredUsersData}
-            keyExtractor={(item) => item.uid}
-            renderItem={renderUserPessoa}
-            scrollEnabled={false}
-        />
+          <FlatList data={filteredUsersData} keyExtractor={(item) => item.uid} renderItem={renderUserPessoa} scrollEnabled={false} />
         ) : (
           <Text>Tipo de conta desconhecido</Text>
         )}
-        
-        <Text style={styles.sectionTitle}>Suas vagas criadas: </Text>
-        
+
+        <Text style={styles.sectionTitle}>Suporte</Text>
+        <View style={styles.areaLow}>
+          <View style={styles.areaLow_areaInfor}>
+            <Text style={styles.areaLow_top_text}>Opções de suporte</Text>
+          </View>
+          <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>FAQ</Text><AntDesign name="caretright" size={24} color={colors.tituloBranco} /></View>
+          <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Central de Ajuda</Text><AntDesign name="caretright" size={24} color={colors.tituloBranco} /></View>
+          <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Fale Conosco</Text><AntDesign name="caretright" size={24} color={colors.tituloBranco} /></View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Suas vagas criadas:</Text>
         <View style={stylesVagas.AreaVagasView}>
           {filteredVagas.length > 0 ? (
-            <FlatList
-              data={filteredVagas}
-              keyExtractor={(item) => item.uid}
-              renderItem={renderVagaCard}
-              scrollEnabled={false}
-            />
+            <FlatList data={filteredVagas} keyExtractor={(item) => item.uid} renderItem={renderVagaCard} scrollEnabled={false} />
           ) : (
-            <Text style={stylesVagas.emptyMessage}>Voce não tem vagas postadas ainda.</Text>
+            <Text style={stylesVagas.emptyMessage}>Você não tem vagas postadas ainda.</Text>
           )}
         </View>
       </ScrollView>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.fundo,
+    textAlign: 'center'
   },
   loadingContainer: {
     flex: 1,
@@ -184,8 +154,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.preto
   },
   sectionTitle: {
-    fontSize: 20,
-    color: colors.tituloBranco,
+    fontSize: 30,
+    color: colors.amarelo2,
     marginLeft: 20,
     marginTop: 30,
   },
@@ -212,7 +182,6 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     marginBottom: 23,
   },
-
   areaLow: {
     width: '90%',
     maxHeight: 500,
@@ -226,7 +195,6 @@ const styles = StyleSheet.create({
   areaLow_top: {
     width: '100%',
     minHeight: 40,
-    //backgroundColor: 'blue',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -241,7 +209,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: colors.tituloBranco,
   },
-
   areaLow_low: {
     width: '100%',
     flexDirection: 'row',
