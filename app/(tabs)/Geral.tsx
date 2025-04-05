@@ -105,13 +105,13 @@ export default function Geral() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fundo,
+    backgroundColor: colors.preto,
   },
   containerTop: {
     width: '100%',
     paddingHorizontal: 20,
     paddingTop: 30,
-    paddingBottom: 10,
+    paddingBottom: 0,
     backgroundColor: colors.preto,
     alignItems: 'center',
   },
@@ -141,31 +141,21 @@ const styles = StyleSheet.create({
 
 const stylesVagas = StyleSheet.create({
   item: {
-    width: '100%',
     backgroundColor: colors.cinza,
-    borderRadius: 15,
-    padding: 16,
-    marginBottom: 15,
-    elevation: 3,
+    padding: 15, borderRadius: 15, marginVertical: 8,
+    width: width * 0.9, alignSelf: 'center', alignItems: 'center',
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: colors.tituloBranco,
-    marginBottom: 4,
-  },
-  subTitle: {
-    fontSize: 18,
-    color: colors.tituloAmarelo,
-    marginBottom: 10,
-  },
+  title: { fontSize: 35, fontWeight: 'bold', color: colors.tituloBranco },
+  subTitle: { fontSize: 21, color: colors.tituloAmarelo, marginBottom: 10 },
   box_mode: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 6,
+    flexDirection: 'row', justifyContent: 'space-between',
+    width: '100%', marginBottom: 2
   },
-  mode: {
-    fontSize: 16,
-    color: colors.tituloBranco,
+  mode: { fontSize: 17, color: colors.tituloBranco, paddingInline: 10, },
+  buttonCandidatar: {
+    backgroundColor: colors.amarelo2,
+    padding: 10, borderRadius: 10, marginTop: 20,
+    alignItems: 'center'
   },
+  buttonText: { fontSize: 16, color: colors.tituloBranco },
 });

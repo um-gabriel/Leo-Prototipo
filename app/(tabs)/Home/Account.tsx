@@ -196,10 +196,10 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: 40,
     alignItems: 'center',
-    justifyContent: 'center'
+
   },
   areaLow_areaInfor: {
-    width: '93%',
+    width: '92%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
