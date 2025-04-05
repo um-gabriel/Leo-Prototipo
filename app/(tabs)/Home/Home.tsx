@@ -135,13 +135,13 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.preto },
   AreaTop: {
-    padding: 25,
-    backgroundColor: colors.fundo2,
+    padding: 22,
+    // backgroundColor: colors.fundo2,
     borderBottomLeftRadius: 50, borderBottomRightRadius: 50,
     alignItems: 'center', justifyContent: 'center'
   },
-  AreaTop_Title: { fontSize: 40, color: colors.amarelo2, fontWeight: '600' },
-  AreaTop_subTitle: { fontSize: 15, color: colors.tituloBranco, textAlign: 'center' },
+  AreaTop_Title: { fontSize: 50, color: colors.amarelo2, fontWeight: '600' },
+  AreaTop_subTitle: { fontSize: 17, color: colors.tituloBranco, textAlign: 'center' },
   content: { padding: 15, alignItems: 'center' },
   BoxContainerEmpresas: {
     flexDirection: 'column',
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
 const stylesVaga = StyleSheet.create({
   item: {
     backgroundColor: colors.cinza,
-    padding: 15, borderRadius: 8, marginVertical: 8,
+    padding: 15, borderRadius: 15, marginVertical: 8,
     width: width * 0.9, alignSelf: 'center', alignItems: 'center',
   },
   title: { fontSize: 35, fontWeight: 'bold', color: colors.tituloBranco },
