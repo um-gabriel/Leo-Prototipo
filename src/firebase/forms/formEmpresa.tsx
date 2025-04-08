@@ -38,9 +38,9 @@ export const FormEmpresa = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
       const data = {
-        uid,
-        gmail: email,
-        name_conta: name,
+        uid: auth.currentUser?.uid,
+        email: email,
+        nomeUsuario: name,
         senha: password,
         descricao,
         cnpj,
@@ -50,6 +50,7 @@ export const FormEmpresa = () => {
         createdAt: new Date(),
       };
       await setDoc(doc(db, 'Contas', uid), data);
+      console.log("Novo usuario: ", uid)
       Alert.alert("Sucesso", "Conta criada com sucesso!");
       router.replace('/(tabs)/Home/Home');
     } catch (error) {

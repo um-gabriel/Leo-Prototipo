@@ -7,6 +7,8 @@ import { useRouter } from 'expo-router';
 import { dados_usuario, userVagas } from '@/src/firebase/functions/get/getInforUser';
 import { handleDeleteVaga } from '@/src/firebase/functions/delete/deleteJob';
 import { StatusBarObject } from '@/src/components/objects';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/src/firebase/config';
 
 export default function Account() {
   const [usersData, setUsersData] = useState<Users[]>([]);
@@ -40,8 +42,8 @@ export default function Account() {
   const renderUserEmpresa = ({ item }: { item: Empresas }) => (
     <View style={styles.data}>
       <View style={styles.areaTop}>
-        <Text style={styles.title}>{item.name_conta}</Text>
-        <Text style={styles.subTitle}>{item.gmail}</Text>
+        <Text style={styles.title}>{item.nomeUsuario}</Text>
+        <Text style={styles.subTitle}>{item.email}</Text>
       </View>
       <View style={styles.areaLow}>
         <View style={styles.areaLow_top}>
@@ -50,7 +52,7 @@ export default function Account() {
             <AntDesign name="rightcircle" size={30} color={colors.amarelo2} />
           </View>
         </View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato: </Text><Text style={styles.areaLow_low_text2}>{item.gmail}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato: </Text><Text style={styles.areaLow_low_text2}>{item.email}</Text></View>
         <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Setor: </Text><Text style={styles.areaLow_low_text2}>{item.setor}</Text></View>
         <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Cnpj: </Text><Text style={styles.areaLow_low_text2}>{item.cnpj}</Text></View>
         <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Descrição: </Text><Text style={styles.areaLow_low_text2}>{item.descricao}</Text></View>
@@ -61,8 +63,8 @@ export default function Account() {
   const renderUserPessoa = ({ item }: { item: Users }) => (
     <View style={styles.data}>
       <View style={styles.areaTop}>
-        <Text style={styles.title}>{item.name_conta}</Text>
-        <Text style={styles.subTitle}>{item.gmail}</Text>
+        <Text style={styles.title}>{item.nomeUsuario}</Text>
+        <Text style={styles.subTitle}>{item.email}</Text>
       </View>
       <View style={styles.areaLow}>
         <View style={styles.areaLow_top}>
@@ -73,8 +75,10 @@ export default function Account() {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato: </Text><Text style={styles.areaLow_low_text2}>{item.gmail}</Text></View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Senha: </Text><Text style={styles.areaLow_low_text2}>{item.password}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato: </Text><Text style={styles.areaLow_low_text2}>{item.email}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Senha: </Text><Text style={styles.areaLow_low_text2}>{item.senha}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Numero de telefone: </Text><Text style={styles.areaLow_low_text2}>{item.telefone}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Links: </Text><Text style={styles.areaLow_low_text2}>{item.links_externos}</Text></View>
       </View>
     </View>
   );
@@ -108,6 +112,15 @@ export default function Account() {
     </View>
   );
 
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);  
+      router.replace('/');  
+    } catch (error) {
+      console.error('Erro ao deslogar:', error.message);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <StatusBarObject />
@@ -126,9 +139,20 @@ export default function Account() {
           <View style={styles.areaLow_areaInfor}>
             <Text style={styles.areaLow_top_text}>Opções de suporte</Text>
           </View>
-          <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>FAQ</Text><AntDesign name="caretright" size={24} color={colors.tituloBranco} /></View>
           <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Central de Ajuda</Text><AntDesign name="caretright" size={24} color={colors.tituloBranco} /></View>
           <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Fale Conosco</Text><AntDesign name="caretright" size={24} color={colors.tituloBranco} /></View>
+          <TouchableOpacity onPress={() => {
+            Alert.alert(
+              "Voce esta saindo da conta",
+              `Tem certeza que deseja sair?`,
+              [
+                { text: "Cancelar" },
+                { text: "Sim", onPress: () => handleSignOut()}
+              ]
+            );
+          }}>
+              <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Sair do aplicativo</Text><AntDesign name="caretright" size={24} color={colors.tituloBranco} /></View>
+          </TouchableOpacity>
         </View>
 
         <Text style={styles.sectionTitle}>Suas vagas criadas:</Text>
@@ -187,7 +211,7 @@ const styles = StyleSheet.create({
   },
   areaLow: {
     width: '90%',
-    maxHeight: 500,
+    maxHeight: 800,
     padding: 15,
     backgroundColor: colors.fundo2,
     borderRadius: 20,

@@ -3,12 +3,13 @@ import { auth, db } from "../config";
 import { doc, getDoc } from "firebase/firestore";
 
 export interface Users {
-    id?: string,
-    uid: string,
-    gmail: string,
-    password: string,
-    name_conta: string,
-    tipo_conta: string,
+    email: string,
+    nomeUsuario: string,
+    senha: string,
+    telefone: string,
+    endereco: string,
+    desc_sobre: string,
+    links_externos: string,
 }
 export interface Empresas {
     id?: string,

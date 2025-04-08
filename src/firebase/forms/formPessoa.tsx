@@ -21,7 +21,6 @@ export const FormPessoa = () => {
   const [links, setLinks] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const tipo_conta = 'Pessoa'
 
   async function createUser() {
     if (name == "" || email == "" || password == "" || descricao == "" || endereco == "" || links == "") {
@@ -34,14 +33,16 @@ export const FormPessoa = () => {
           
                 try {
                   const dadosConta = {
-                        uid: verification().uid,
+                        uid: auth.currentUser?.uid,
                         email: email,
                         nomeUsuario: name,
                         senha: password,
                         telefone: telefone,
                         endereco: endereco,
                         desc_sobre: descricao,
-                        links_externos: links
+                        links_externos: links,
+                        tipo_conta: 'Pessoa',
+                        createdAt: new Date(),
                   };
                   addDoc(collection(db, 'Contas'), dadosConta);
                   Alert.alert('Concluído!', 'Conta criada');

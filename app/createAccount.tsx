@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '@/src/firebase/config';
 import { addDoc, collection } from 'firebase/firestore';
-import { height, width } from '@/src/firebase/functions/interface';
+import { width } from '@/src/firebase/functions/interface';
 import { Picker } from '@react-native-picker/picker';
 import { colors } from '@/src/components/global';
 import { FormPessoa } from '@/src/firebase/forms/formPessoa';
