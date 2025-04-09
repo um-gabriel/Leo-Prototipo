@@ -43,8 +43,8 @@ export default function Geral() {
 
   const renderItem = ({ item }: { item: Vagas }) => (
     <View style={stylesVagas.item}>
-      <Text style={stylesVagas.title}>{item.name_vaga}</Text>
-      <Text style={stylesVagas.subTitle}>{item.empresa}</Text>
+      <Text style={stylesVagas.title}>{item.nome_vaga}</Text>
+      <Text style={stylesVagas.subTitle}>{item.nome_empresa}</Text>
 
       <View style={stylesVagas.box_mode}>
         <Text style={stylesVagas.mode}>Salário:</Text>
@@ -53,12 +53,12 @@ export default function Geral() {
 
       <View style={stylesVagas.box_mode}>
         <Text style={stylesVagas.mode}>Modalidades:</Text>
-        <Text style={stylesVagas.mode}>{item.modalidades}</Text>
+        <Text style={stylesVagas.mode}>{item.modalidade}</Text>
       </View>
 
       <View style={stylesVagas.box_mode}>
         <Text style={stylesVagas.mode}>Contato:</Text>
-        <Text style={stylesVagas.mode}>{item.gmail}</Text>
+        <Text style={stylesVagas.mode}>{item.email}</Text>
       </View>
 
       <View style={stylesVagas.box_mode}>

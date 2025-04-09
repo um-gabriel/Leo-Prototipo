@@ -7,7 +7,7 @@ export async function fetchEmpresas (fetchEmpresasData: any) {
         const q = query(
         collection(db, "Contas"),
         where("tipo_conta", "==", "Empresa"), // Condição
-        limit(2)
+        limit(11)
         );
         const querySnapshot = await getDocs(q);      
         const UsersArray = querySnapshot.docs.map(doc => ({

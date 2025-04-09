@@ -83,23 +83,23 @@ export default function Others() {
     getFreelancerVagas({ setFreelancer, setFilteredFreelancer, setLoading });
   }, []);
 
-  const renderItemEmpresa = ({ item }) => (
+  const renderItemEmpresa = ({ item } : { item: Empresas }) => (
     <TouchableOpacity style={styles.cardEmpresa} onPress={() => { setSelectedEmpresa(item); setAbrirModal(true); }}>
       <Text style={styles.empresaTitulo}>{item.name_conta}</Text>
-      <Text style={styles.empresaTexto}>{item.gmail}</Text>
-      <Text style={styles.empresaTexto}>{item.setor}</Text>
+      <Text style={styles.empresaTexto}>{item.email}</Text>
+      <Text style={styles.empresaTexto}>{item.descricao}</Text>
     </TouchableOpacity>
   );
 
-  const renderItemFreelancer = ({ item }) => (
+  const renderItemFreelancer = ({ item } : { item: Freelancer }) => (
     <View style={styles.cardFreelancer}>
-      <Text style={styles.freelancerTitulo}>{item.name}</Text>
+      <Text style={styles.freelancerTitulo}>{item.titulo_servico}</Text>
       <Text style={styles.freelancerTexto}>Responsável: {item.responsavel}</Text>
-      <Text style={styles.freelancerTexto}>Preço: R$ {item.preco}</Text>
-      <Text style={styles.freelancerTexto}>E-mail: {item.gmail}</Text>
-      <Text style={styles.freelancerTexto}>Localização: {item.localizacao}</Text>
+      <Text style={styles.freelancerTexto}>Preço: R$ {item.valor_servico}</Text>
+      <Text style={styles.freelancerTexto}>E-mail: {item.email}</Text>
+      <Text style={styles.freelancerTexto}>Localização: {item.localizacao_servico}</Text>
       <Text style={styles.freelancerTexto}>Competências: {item.Competencias}</Text>
-      <Text style={styles.freelancerTexto}>Descrição: {item.descricao}</Text>
+      <Text style={styles.freelancerTexto}>Descrição: {item.descricao_servico}</Text>
     </View>
   );
 
@@ -121,6 +121,7 @@ export default function Others() {
       <View style={styles.container}>
 
         <Text style={styles.sectionTitle}>Empresas</Text>
+        
         <FlatList
           data={filteredEmpresas}
           horizontal
@@ -135,11 +136,12 @@ export default function Others() {
 
         {currentJob && (
           <View style={styles.cardVaga}>
-            <Text style={styles.cardTitle}>{currentJob.name_vaga}</Text>
-            <Text style={styles.cardText}>{currentJob.empresa}</Text>
+            <Text style={styles.cardTitle}>{currentJob.nome_vaga}</Text>
+            <Text style={styles.cardText}>{currentJob.nome_empresa}</Text>
             <Text style={styles.cardText}>Local: {currentJob.localizacao}</Text>
-            <Text style={styles.cardText}>Modalidade: {currentJob.modalidades}</Text>
+            <Text style={styles.cardText}>Modalidade: {currentJob.modalidade}</Text>
             <Text style={styles.cardText}>Salário: R$ {currentJob.salario}</Text>
+            <Text style={styles.cardText}>Descrição: {currentJob.descricao}</Text>
             <View style={styles.cardButtons}>
               <TouchableOpacity style={styles.buttonDislike} onPress={handleDislike}>
                 <Ionicons name="arrow-back" size={24} color="white" />
@@ -166,7 +168,7 @@ export default function Others() {
           <View style={styles.modalContainer}>
             {currentJob && (
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>{currentJob.name_vaga}</Text>
+                <Text style={styles.modalTitle}>{currentJob}</Text>
                 <Text style={styles.modalText}>Empresa: {currentJob.empresa}</Text>
                 <Text style={styles.modalText}>Salário: R$ {currentJob.salario}</Text>
                 <Text style={styles.modalText}>Contato: {currentJob.gmail}</Text>
@@ -189,9 +191,9 @@ export default function Others() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 10,
     paddingBottom: 80,
-    textAlign: 'center'
+    backgroundColor: colors.preto,
   },
   sectionTitle: {
     fontSize: 28,
@@ -211,6 +213,7 @@ const styles = StyleSheet.create({
   },
   cardEmpresa: {
     width: 180,
+    maxHeight: 400,
     backgroundColor: colors.cinza,
     borderRadius: 12,
     padding: 15,

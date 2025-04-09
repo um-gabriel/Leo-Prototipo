@@ -4,7 +4,7 @@ import { doc, getDoc } from "firebase/firestore";
 
 export interface Users {
     email: string,
-    nomeUsuario: string,
+    name_conta: string,
     senha: string,
     telefone: string,
     endereco: string,
@@ -12,9 +12,9 @@ export interface Users {
     links_externos: string,
 }
 export interface Empresas {
-    id?: string,
     uid: string,
-    gmail: string,
+
+    email: string,
     name_conta: string,
     password: string,
     setor: string,
@@ -25,27 +25,32 @@ export interface Empresas {
 
 export interface Vagas {
     vaga_id: string,
-    name_vaga: string,
+    nome_vaga: string,
     uid_criadorVaga: string,
-    candidato_id: string,
+    nome_empresa: string,
     salario: number,
-    gmail: string,
-    empresa: string,
-    modalidades: string,
+    email: string,
+    modalidade: string,
     localizacao: string,
     descricao: string,
+    regime: string,
     setor: string,
     createdAt: Date,
 };
 
 export interface Freelancer {
-    name: string;
-    descricao: string;
+    servico_id: string,
+    uid_criadorServico: string,
+    titulo_servico: string;
+    dataPublicacao_servico: Date;
+    descricao_servico: string;
     Competencias: string;
-    localizacao: string;
+    modalidade_servico: string,
+    localizacao_servico: string;
     responsavel: string;
-    preco: string; // ou number, dependendo de como você armazena
-    gmail: string;
+    valor_servico: string; // ou number, dependendo de como você armazena
+    email: string;
+    tempo_execucao: string;
 };
 
 export interface CandidaturaVaga {

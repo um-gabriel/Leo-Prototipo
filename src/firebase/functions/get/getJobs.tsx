@@ -70,7 +70,7 @@ export async function getFreelancerVagas (DadosFreelancer: any)  {
     
     try {
         const q = query(
-        collection(db, "Vagas-Freelancer"),
+        collection(db, "Servicos-freelancer"),
         limit(4) // Limita a 2 resultados
         );
         const querySnapshot = await getDocs(q);

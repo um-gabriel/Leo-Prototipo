@@ -23,36 +23,43 @@ export const FormPessoa = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   async function createUser() {
-    if (name == "" || email == "" || password == "" || descricao == "" || endereco == "" || links == "") {
-      Alert.alert("Preencha todos os campos")
-    }
-    else {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(value => {
-                console.log("Cadastrado com sucesso! \n" + value.user.uid);
-          
-                try {
-                  const dadosConta = {
-                        uid: auth.currentUser?.uid,
-                        email: email,
-                        nomeUsuario: name,
-                        senha: password,
-                        telefone: telefone,
-                        endereco: endereco,
-                        desc_sobre: descricao,
-                        links_externos: links,
-                        tipo_conta: 'Pessoa',
-                        createdAt: new Date(),
-                  };
-                  addDoc(collection(db, 'Contas'), dadosConta);
-                  Alert.alert('Concluído!', 'Conta criada');
-                  router.replace('/(tabs)/Home/Home');
-                } catch {
-                  console.error("Erro ao configurar no firestore!", Error)
-                  Alert.alert("Erro ao cadastrar!", "Verifique as informações")
-                }
-          })
-            .catch((error) => console.log(error.message)); // Corrigido aqui: melhor tratamento de erro
+    try {
+      setIsLoading(true)
+        if (name == "" || email == "" || password == "" || descricao == "" || endereco == "" || links == "") {
+          Alert.alert("Preencha todos os campos")
+        }
+        else {
+            createUserWithEmailAndPassword(auth, email, password)
+                .then(value => {
+                    console.log("Cadastrado com sucesso! \n" + value.user.uid);
+              
+                    try {
+                      const dadosConta = {
+                            uid: auth.currentUser?.uid,
+                            email: email,
+                            name_conta: name,
+                            senha: password,
+                            telefone: telefone,
+                            endereco: endereco,
+                            desc_sobre: descricao,
+                            links_externos: links,
+                            tipo_conta: 'Pessoa',
+                            createdAt: new Date(),
+                      };
+                      addDoc(collection(db, 'Contas'), dadosConta);
+                      Alert.alert('Concluído!', 'Conta criada');
+                      router.replace('/(tabs)/Home/Home');
+                    } catch {
+                      console.error("Erro ao configurar no firestore!", Error)
+                      Alert.alert("Erro ao cadastrar!", "Verifique as informações")
+                    }
+              })
+                .catch((error) => console.log(error.message)); // Corrigido aqui: melhor tratamento de erro
+          }
+    } catch (error) {
+      console.log("A função criar conta pesso n foi concluida", error.message)
+    } finally {
+      setIsLoading(false)
     }
 };
 

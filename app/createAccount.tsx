@@ -11,6 +11,7 @@ import { FormPessoa } from '@/src/firebase/forms/formPessoa';
 import { FormEmpresa } from '@/src/firebase/forms/formEmpresa';
 import { StatusBarObject } from '@/src/components/objects';
 import { AntDesign } from '@expo/vector-icons';
+import { FormFreelancer } from '@/src/firebase/forms/formFreelancer';
 
 export default function CreateAccount() {
   const router = useRouter();
@@ -64,12 +65,14 @@ export default function CreateAccount() {
             <Picker.Item label="Selecione..." value="" />
             <Picker.Item label="Pessoa" value="Pessoa" />
             <Picker.Item label="Empresa" value="Empresa" />
+            <Picker.Item label="Freelancer" value="Freelancer" />
           </Picker>
         </View>
 
         <View style={Style.formContainer}>
           {tipoConta === 'Pessoa' && <FormPessoa setEmail={setEmail} setPassword={setPassword} onSubmit={createUser} />}
           {tipoConta === 'Empresa' && <FormEmpresa setEmail={setEmail} setPassword={setPassword} onSubmit={createUser} />}
+          {tipoConta === 'Freelancer' && <FormFreelancer setEmail={setEmail} setPassword={setPassword} onSubmit={createUser} />}
           {tipoConta === '' && (
             <Text style={Style.selectText}>Por favor, selecione um tipo de conta acima</Text>
           )}

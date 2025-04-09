@@ -1,53 +1,110 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { Botão } from '@/src/components/objects';
 import { colors } from '@/src/components/global';
-import { width } from '@/src/firebase/functions/interface';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '../config';
+import { verification } from '../functions/interface';
+import { router } from 'expo-router';
 
 export default function FormServicosFree() {
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const [titulo_servico, setTitulo_servico] = useState("");
+  const [categoria_servico, setCategoria_servico] = useState("");
+  const [email, setEmail] = useState("");
+  const [descricao_servico, setDescricao_servico] = useState("");
+  const [valor_servico, setValor_servico] = useState("");
+  const [tempo_execucao, setTempo_execucao] = useState("");
+  const [modalidade_servico, setModalidade_servico] = useState("");
+  const [localizacao_servico, setLocalizacao_servico] = useState("");
+
+  async function createServicoFree() {
+    if (!titulo_servico || !descricao_servico || !categoria_servico) {
+      Alert.alert("Preencha os campos obrigatórios.");
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
+    try {
+      await addDoc(collection(db, "Servicos-freelancer"), {
+        titulo_servico,
+        responsavel_servico: verification().name_conta,
+        email,
+        // servico_id,
+        categoria_servico,
+        descricao_servico,
+        valor_servico,
+        tempo_execucao,
+        modalidade_servico,
+        localizacao_servico,
+        dataPublicacao_servico: serverTimestamp(),
+        uid_criadorServico: auth.currentUser?.uid,
+      });
+
+      Alert.alert("Serviço criado com sucesso!");
+      setTitulo_servico("");
+      setCategoria_servico("");
+      setDescricao_servico("");
+      setValor_servico("");
+      setTempo_execucao("");
+      setModalidade_servico("");
+      setLocalizacao_servico("");
+      router.replace("/(tabs)/Home/Home")
+    } catch (error) {
+      console.error("Erro ao criar serviço:", error);
+      Alert.alert("Erro ao criar serviço.");
+    } finally {
       setLoading(false);
-      Alert.alert('Sucesso!', 'Vaga CLT cadastrada com sucesso.');
-    }, 1500);
-  };
+    }
+  }
 
   return (
-    <View style={styles.form}>
-      <Campo label="Nome dbdfvbdfa Vaga" valor="Auxiliar Administrativo" />
-      <Campo label="Empresa" valor="Tech Solutions Ltda." />
-      <Campo label="Salário" valor="R$ 2.500" />
-      <Campo label="Localização" valor="Belo Horizonte - MG" />
-      <Campo label="Setor" valor="Administrativo" />
-      <Campo label="E-mail para contato" valor="rh@techsolutions.com" />
-      <Campo label="Descrição" valor="Auxiliar em rotinas administrativas e atendimento ao cliente." />
+    <ScrollView style={styles.form} contentContainerStyle={{ paddingBottom: 40 }}>
+      <Input label="Título do serviço" value={titulo_servico} onChangeText={setTitulo_servico} />
+      <Input label="Email de contato" value={email} onChangeText={setEmail} />
+      <Input label="Categoria (ex: design, elétrica)" value={categoria_servico} onChangeText={setCategoria_servico} />
+      <Input label="Descrição do serviço" value={descricao_servico} onChangeText={setDescricao_servico} multiline />
+      <Input label="Valor estimado (opcional)" value={valor_servico} onChangeText={setValor_servico} />
+      {/* <Input label="Valor estimado (opcional)" value={valor_servico} onChangeText={setValor_servico} />  // COMPETENÇIAS ARRUMAR */}
+      <Input label="Tempo de execução (opcional)" value={tempo_execucao} onChangeText={setTempo_execucao} />
+      <Input label="Modalidade (ex: presencial/remoto)" value={modalidade_servico} onChangeText={setModalidade_servico} />
+      <Input label="Localização" value={localizacao_servico} onChangeText={setLocalizacao_servico} />
 
       <View style={styles.buttonArea}>
         {loading ? (
           <ActivityIndicator size="large" color={colors.amarelo1} />
         ) : (
-          <Botão onPress={handleSubmit}>
-            <Text style={styles.textButton}>Criar Vaga</Text>
+          <Botão onPress={createServicoFree}>
+            <Text style={styles.textButton}>Criar Serviço</Text>
           </Botão>
         )}
       </View>
+    </ScrollView>
+  );
+}
+
+function Input({ label, value, onChangeText, multiline = false }) {
+  return (
+    <View style={styles.inputArea}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={[styles.input, multiline && { height: 100, textAlignVertical: 'top' }]}
+        placeholder=""
+        placeholderTextColor={colors.placeholder}
+        value={value}
+        onChangeText={onChangeText}
+        multiline={multiline}
+      />
     </View>
   );
 }
 
-const Campo = ({ label, valor }: { label: string; valor: string }) => (
-  <View style={styles.inputArea}>
-    <Text style={styles.label}>{label}</Text>
-    <TextInput style={styles.input} defaultValue={valor} placeholderTextColor="#888" />
-  </View>
-);
-
 const styles = StyleSheet.create({
   form: {
     paddingHorizontal: 20,
+    backgroundColor: colors.fundo,
+    flex: 1,
   },
   inputArea: {
     marginBottom: 15,
@@ -55,15 +112,18 @@ const styles = StyleSheet.create({
   label: {
     color: colors.tituloBranco,
     marginBottom: 5,
+    fontSize: 16,
+    fontWeight: '500',
   },
   input: {
     backgroundColor: colors.fundo2,
     color: colors.tituloBranco,
-    padding: 10,
-    borderRadius: 10,
+    padding: 12,
+    borderRadius: 12,
+    fontSize: 16,
   },
   buttonArea: {
-    marginTop: 20,
+    marginTop: 30,
     alignItems: 'center',
   },
   textButton: {
