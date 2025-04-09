@@ -63,7 +63,7 @@ export default function Account() {
   const renderUserPessoa = ({ item }: { item: Users }) => (
     <View style={styles.data}>
       <View style={styles.areaTop}>
-        <Text style={styles.title}>{item.nomeUsuario}</Text>
+        <Text style={styles.title}>{item.name_conta}</Text>
         <Text style={styles.subTitle}>{item.email}</Text>
       </View>
       <View style={styles.areaLow}>
@@ -87,7 +87,7 @@ export default function Account() {
     <View style={stylesVagas.item}>
       <View style={stylesVagas.item_areaTitle}>
         <MaterialCommunityIcons name="information-outline" size={30} color="white" />
-        <Text style={stylesVagas.title}>{item.name_vaga}</Text>
+        <Text style={stylesVagas.title}>{item.nome_vaga}</Text>
         <MaterialCommunityIcons
           name="delete"
           size={30}
@@ -105,8 +105,8 @@ export default function Account() {
         />
       </View>
       <Text style={stylesVagas.text}>Salario: R$ {item.salario}</Text>
-      <Text style={stylesVagas.text}>Empresa: {item.empresa}</Text>
-      <Text style={stylesVagas.text}>Gmail: {item.gmail}</Text>
+      <Text style={stylesVagas.text}>Empresa: {item.nome_empresa}</Text>
+      <Text style={stylesVagas.text}>Gmail: {item.email}</Text>
       <Text style={stylesVagas.text}>Localização: {item.localizacao}</Text>
       <Text style={stylesVagas.text}>Setor: {item.setor}</Text>
     </View>
