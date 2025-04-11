@@ -44,7 +44,6 @@ export interface Freelancer {
     titulo_servico: string;
     dataPublicacao_servico: Date;
     descricao_servico: string;
-    Competencias: string;
     modalidade_servico: string,
     localizacao_servico: string;
     responsavel: string;

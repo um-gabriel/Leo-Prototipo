@@ -20,13 +20,13 @@ export default function Account() {
   const [tipoConta, setTipoConta] = useState<string | null>(null);
 
   useEffect(() => {
-    const userVagaData = { setUserVagasList, setFilteredVagas, setLoading }
+    const userVagaData = { setUserVagasList, setFilteredVagas, setLoading };
     userVagas(userVagaData);
 
-    const passData = { setUsersData, setFilteredUsersData, setTipoConta, setLoading }
+    const passData = { setUsersData, setFilteredUsersData, setTipoConta, setLoading };
     dados_usuario(passData);
 
-    const vagaId = { filteredVagas }
+    const vagaId = { filteredVagas };
     handleDeleteVaga(vagaId);
   }, []);
 
@@ -34,7 +34,7 @@ export default function Account() {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.amarelo1} />
-        <Text>Loading...</Text>
+        <Text style={{ color: colors.tituloBranco }}>Carregando...</Text>
       </View>
     );
   }
@@ -52,10 +52,10 @@ export default function Account() {
             <AntDesign name="rightcircle" size={30} color={colors.amarelo2} />
           </View>
         </View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato: </Text><Text style={styles.areaLow_low_text2}>{item.email}</Text></View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Setor: </Text><Text style={styles.areaLow_low_text2}>{item.setor}</Text></View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Cnpj: </Text><Text style={styles.areaLow_low_text2}>{item.cnpj}</Text></View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Descrição: </Text><Text style={styles.areaLow_low_text2}>{item.descricao}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato:</Text><Text style={styles.areaLow_low_text2}>{item.email}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Setor:</Text><Text style={styles.areaLow_low_text2}>{item.setor}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>CNPJ:</Text><Text style={styles.areaLow_low_text2}>{item.cnpj}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Descrição:</Text><Text style={styles.areaLow_low_text2}>{item.descricao}</Text></View>
       </View>
     </View>
   );
@@ -70,15 +70,15 @@ export default function Account() {
         <View style={styles.areaLow_top}>
           <View style={styles.areaLow_areaInfor}>
             <Text style={styles.areaLow_top_text}>Informações da conta</Text>
-            <TouchableOpacity onPress={() => router.replace('/(tabs)/Config')} >
-                <AntDesign name="rightcircle" size={30} color={colors.amarelo2} />
+            <TouchableOpacity onPress={() => router.replace('/(tabs)/Config')}>
+              <AntDesign name="rightcircle" size={30} color={colors.amarelo2} />
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato: </Text><Text style={styles.areaLow_low_text2}>{item.email}</Text></View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Senha: </Text><Text style={styles.areaLow_low_text2}>{item.senha}</Text></View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Numero de telefone: </Text><Text style={styles.areaLow_low_text2}>{item.telefone}</Text></View>
-        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Links: </Text><Text style={styles.areaLow_low_text2}>{item.links_externos}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato:</Text><Text style={styles.areaLow_low_text2}>{item.email}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Senha:</Text><Text style={styles.areaLow_low_text2}>{item.senha}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Telefone:</Text><Text style={styles.areaLow_low_text2}>{item.telefone}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Links:</Text><Text style={styles.areaLow_low_text2}>{item.links_externos}</Text></View>
       </View>
     </View>
   );
@@ -94,19 +94,19 @@ export default function Account() {
           color="red"
           onPress={() => {
             Alert.alert(
-              "Delete Job Position",
-              `Are you sure you want to delete "${item.name}"?`,
+              "Excluir vaga",
+              `Deseja realmente excluir a vaga "${item.name}"?`,
               [
-                { text: "Cancel", style: "cancel" },
-                { text: "Delete", onPress: () => handleDeleteVaga(item.id), style: "destructive" }
+                { text: "Cancelar", style: "cancel" },
+                { text: "Excluir", onPress: () => handleDeleteVaga(item.id), style: "destructive" }
               ]
             );
           }}
         />
       </View>
-      <Text style={stylesVagas.text}>Salario: R$ {item.salario}</Text>
+      <Text style={stylesVagas.text}>Salário: R$ {item.salario}</Text>
       <Text style={stylesVagas.text}>Empresa: {item.nome_empresa}</Text>
-      <Text style={stylesVagas.text}>Gmail: {item.email}</Text>
+      <Text style={stylesVagas.text}>Email: {item.email}</Text>
       <Text style={stylesVagas.text}>Localização: {item.localizacao}</Text>
       <Text style={stylesVagas.text}>Setor: {item.setor}</Text>
     </View>
@@ -114,9 +114,9 @@ export default function Account() {
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);  
-      router.replace('/');  
-    } catch (error) {
+      await signOut(auth);
+      router.replace('/');
+    } catch (error: any) {
       console.error('Erro ao deslogar:', error.message);
     }
   };
@@ -124,14 +124,23 @@ export default function Account() {
   return (
     <View style={styles.container}>
       <StatusBarObject />
-      
       <ScrollView>
         {tipoConta === 'Empresa' ? (
-          <FlatList data={filteredUsersData} keyExtractor={(item) => item.uid} renderItem={renderUserEmpresa} scrollEnabled={false} />
+          <FlatList
+            data={filteredUsersData}
+            keyExtractor={(item) => item.uid}
+            renderItem={renderUserEmpresa}
+            scrollEnabled={false}
+          />
         ) : tipoConta === 'Pessoa' ? (
-          <FlatList data={filteredUsersData} keyExtractor={(item) => item.uid} renderItem={renderUserPessoa} scrollEnabled={false} />
+          <FlatList
+            data={filteredUsersData}
+            keyExtractor={(item) => item.uid}
+            renderItem={renderUserPessoa}
+            scrollEnabled={false}
+          />
         ) : (
-          <Text>Tipo de conta desconhecido</Text>
+          <Text style={styles.sectionTitle}>Tipo de conta desconhecido</Text>
         )}
 
         <Text style={styles.sectionTitle}>Suporte</Text>
@@ -143,26 +152,38 @@ export default function Account() {
           <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Fale Conosco</Text><AntDesign name="caretright" size={24} color={colors.tituloBranco} /></View>
           <TouchableOpacity onPress={() => {
             Alert.alert(
-              "Voce esta saindo da conta",
-              `Tem certeza que deseja sair?`,
+              "Você está saindo da conta",
+              "Tem certeza que deseja sair?",
               [
                 { text: "Cancelar" },
-                { text: "Sim", onPress: () => handleSignOut()}
+                { text: "Sim", onPress: () => handleSignOut() }
               ]
             );
           }}>
-              <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Sair do aplicativo</Text><AntDesign name="caretright" size={24} color={colors.tituloBranco} /></View>
+            <View style={styles.areaLow_low}>
+              <Text style={styles.areaLow_low_text}>Sair do aplicativo</Text>
+              <AntDesign name="caretright" size={24} color={colors.tituloBranco} />
+            </View>
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.sectionTitle}>Suas vagas criadas:</Text>
-        <View style={stylesVagas.AreaVagasView}>
-          {filteredVagas.length > 0 ? (
-            <FlatList data={filteredVagas} keyExtractor={(item) => item.uid} renderItem={renderVagaCard} scrollEnabled={false} />
-          ) : (
-            <Text style={stylesVagas.emptyMessage}>Você não tem vagas postadas ainda.</Text>
-          )}
-        </View>
+        {(tipoConta === 'Empresa' || tipoConta === 'Freelancer') && (
+          <>
+            <Text style={styles.sectionTitle}>Suas vagas criadas:</Text>
+            <View style={stylesVagas.AreaVagasView}>
+              {filteredVagas.length > 0 ? (
+                <FlatList
+                  data={filteredVagas}
+                  keyExtractor={(item) => item.uid}
+                  renderItem={renderVagaCard}
+                  scrollEnabled={false}
+                />
+              ) : (
+                <Text style={stylesVagas.emptyMessage}>Você não tem vagas postadas ainda.</Text>
+              )}
+            </View>
+          </>
+        )}
       </ScrollView>
     </View>
   );
@@ -171,8 +192,8 @@ export default function Account() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fundo,
-    textAlign: 'center'
+    backgroundColor: colors.preto,
+    paddingBottom: 120,
   },
   loadingContainer: {
     flex: 1,
@@ -182,23 +203,24 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 30,
+    fontWeight: 'bold',
     color: colors.amarelo2,
     marginLeft: 20,
     marginTop: 30,
   },
   data: {
-    maxWidth: width * 1,
-    minHeight: height * 0.10,
+    maxWidth: width,
+    minHeight: height * 0.1,
     alignItems: 'center',
   },
   areaTop: {
     backgroundColor: colors.fundo2,
-    width: width * 1,
-    height: 130,
-    justifyContent: 'flex-end'
+    width: width,
+    paddingVertical: 20,
+    justifyContent: 'flex-end',
   },
   title: {
-    fontSize: 40,
+    fontSize: 35,
     fontWeight: 'bold',
     color: colors.tituloBranco,
     marginLeft: 30,
@@ -206,50 +228,48 @@ const styles = StyleSheet.create({
   subTitle: {
     fontSize: 20,
     color: colors.cinza2,
-    marginLeft: 40,
-    marginBottom: 23,
+    marginLeft: 30,
+    marginBottom: 10,
   },
   areaLow: {
     width: '90%',
-    maxHeight: 800,
     padding: 15,
     backgroundColor: colors.fundo2,
     borderRadius: 20,
-    marginTop: 20,
-    flexWrap: "wrap",
-    alignItems: 'center',
+    marginTop: 25,
+    alignSelf: 'center',
   },
   areaLow_top: {
     width: '100%',
-    minHeight: 40,
+    minHeight: 50,
     alignItems: 'center',
-
   },
   areaLow_areaInfor: {
-    width: '92%',
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 5,
   },
   areaLow_top_text: {
-    fontSize: 28,
+    fontSize: 22,
+    fontWeight: 'bold',
     color: colors.tituloBranco,
   },
   areaLow_low: {
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 4,
-    padding: 5,
+    marginTop: 11,
   },
   areaLow_low_text: {
-    fontSize: 18,
+    fontSize: 16,
     color: colors.cinza2,
   },
   areaLow_low_text2: {
     fontSize: 16,
     color: colors.tituloAmarelo,
+    flexShrink: 1,
+    textAlign: 'right'
   },
 });
 
@@ -257,37 +277,35 @@ const stylesVagas = StyleSheet.create({
   AreaVagasView: {
     padding: 20,
     width: width,
-    minHeight: '2%',
   },
   item: {
-    padding: 5,
-    marginVertical: 8,
+    padding: 10,
+    marginBottom: 15,
     backgroundColor: colors.cinza,
-    borderRadius: 8,
+    borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
-    alignItems: 'center',
   },
   item_areaTitle: {
-    width: width * 0.88,
-    height: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: colors.tituloAmarelo,
+    flex: 1,
+    marginLeft: 10,
   },
   text: {
     fontSize: 16,
     color: colors.tituloBranco,
-    marginBottom: 5,
+    marginBottom: 4,
   },
   emptyMessage: {
     fontSize: 16,
