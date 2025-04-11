@@ -9,7 +9,7 @@ import { db } from '@/src/firebase/config';
 import { colors } from '@/src/components/global';
 import { Empresas, Freelancer, height, Users, width } from '@/src/firebase/functions/interface';
 import { useRouter } from 'expo-router';
-import { BotaoInicio, StatusBarObject } from '@/src/components/objects';
+import { BotãoInicio, StatusBarObject } from '@/src/components/objects';
 import { fetchEmpresas } from '@/src/firebase/functions/get/getCompany';
 import { getFreelancerVagas } from '@/src/firebase/functions/get/getJobs';
 
@@ -47,9 +47,9 @@ export default function Others() {
   async function handleLike() {
     if (currentJobIndex < jobs.length) {
       const job = jobs[currentJobIndex];
-      Alert.alert('Gostou!', `Você curtiu a vaga: ${job.name}`);
+      Alert.alert('Gostou!', `Você curtiu a vaga: ${job.nome_vaga}`);
       try {
-        const jobRef = doc(db, 'Vagas-trabalho', job.id);
+        const jobRef = doc(db, 'Vagas-trabalhos', job.id);
         await updateDoc(jobRef, {
           likes: increment(1)
         });
@@ -64,7 +64,7 @@ export default function Others() {
   const handleDislike = () => {
     if (currentJobIndex < jobs.length) {
       const job = jobs[currentJobIndex];
-      Alert.alert('Não gostou', `Você rejeitou a vaga: ${job.name}`);
+      Alert.alert('Não gostou', `Você rejeitou a vaga: ${job.nome_vaga}`);
       nextJob();
     }
   };
@@ -83,22 +83,20 @@ export default function Others() {
     getFreelancerVagas({ setFreelancer, setFilteredFreelancer, setLoading });
   }, []);
 
-  const renderItemEmpresa = ({ item } : { item: Empresas }) => (
+  const renderItemEmpresa = ({ item }) => (
     <TouchableOpacity style={styles.cardEmpresa} onPress={() => { setSelectedEmpresa(item); setAbrirModal(true); }}>
       <Text style={styles.empresaTitulo}>{item.name_conta}</Text>
       <Text style={styles.empresaTexto}>{item.email}</Text>
-      <Text style={styles.empresaTexto}>{item.descricao}</Text>
     </TouchableOpacity>
   );
 
-  const renderItemFreelancer = ({ item } : { item: Freelancer }) => (
+  const renderItemFreelancer = ({ item }) => (
     <View style={styles.cardFreelancer}>
       <Text style={styles.freelancerTitulo}>{item.titulo_servico}</Text>
       <Text style={styles.freelancerTexto}>Responsável: {item.responsavel}</Text>
       <Text style={styles.freelancerTexto}>Preço: R$ {item.valor_servico}</Text>
       <Text style={styles.freelancerTexto}>E-mail: {item.email}</Text>
       <Text style={styles.freelancerTexto}>Localização: {item.localizacao_servico}</Text>
-      <Text style={styles.freelancerTexto}>Competências: {item.Competencias}</Text>
       <Text style={styles.freelancerTexto}>Descrição: {item.descricao_servico}</Text>
     </View>
   );
@@ -121,7 +119,6 @@ export default function Others() {
       <View style={styles.container}>
 
         <Text style={styles.sectionTitle}>Empresas</Text>
-        
         <FlatList
           data={filteredEmpresas}
           horizontal
@@ -137,7 +134,7 @@ export default function Others() {
         {currentJob && (
           <View style={styles.cardVaga}>
             <Text style={styles.cardTitle}>{currentJob.nome_vaga}</Text>
-            <Text style={styles.cardText}>{currentJob.nome_empresa}</Text>
+            <Text style={styles.cardText}>Empresa: {currentJob.nome_empresa}</Text>
             <Text style={styles.cardText}>Local: {currentJob.localizacao}</Text>
             <Text style={styles.cardText}>Modalidade: {currentJob.modalidade}</Text>
             <Text style={styles.cardText}>Salário: R$ {currentJob.salario}</Text>
@@ -168,19 +165,19 @@ export default function Others() {
           <View style={styles.modalContainer}>
             {currentJob && (
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>{currentJob}</Text>
-                <Text style={styles.modalText}>Empresa: {currentJob.empresa}</Text>
+                <Text style={styles.modalTitle}>{currentJob.nome_vaga}</Text>
+                <Text style={styles.modalText}>Empresa: {currentJob.nome_empresa}</Text>
                 <Text style={styles.modalText}>Salário: R$ {currentJob.salario}</Text>
                 <Text style={styles.modalText}>Contato: {currentJob.gmail}</Text>
                 <Text style={styles.modalText}>Localização: {currentJob.localizacao}</Text>
-                <Text style={styles.modalText}>Modalidade: {currentJob.modalidades}</Text>
+                <Text style={styles.modalText}>Modalidade: {currentJob.modalidade}</Text>
                 <Text style={styles.modalText}>Setor: {currentJob.setor}</Text>
                 <Text style={styles.modalText}>Descrição: {currentJob.descricao}</Text>
               </View>
             )}
-            <BotaoInicio onPress={() => setAbrirModal(false)}>
+            <BotãoInicio onPress={() => setAbrirModal(false)}>
               <Text style={styles.closeButtonText}>Fechar</Text>
-            </BotaoInicio>
+            </BotãoInicio>
           </View>
         </Modal>
 
@@ -192,8 +189,9 @@ export default function Others() {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    paddingBottom: 80,
+    paddingBottom: 130,
     backgroundColor: colors.preto,
+    alignItems: 'center'
   },
   sectionTitle: {
     fontSize: 28,
@@ -213,10 +211,9 @@ const styles = StyleSheet.create({
   },
   cardEmpresa: {
     width: 180,
-    maxHeight: 400,
     backgroundColor: colors.cinza,
     borderRadius: 12,
-    padding: 15,
+    padding: 25,
     marginRight: 10,
     marginTop: 10,
     alignItems: 'center'

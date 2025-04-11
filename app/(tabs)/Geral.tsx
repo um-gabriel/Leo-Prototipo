@@ -34,8 +34,8 @@ export default function Geral() {
       setFilteredJobs(jobs);
     } else {
       const filtered = jobs.filter(job =>
-        (job.name_vaga && job.name_vaga.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (job.empresa && job.empresa.toLowerCase().includes(searchQuery.toLowerCase()))
+        (job.nome_vaga && job.nome_vaga.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (job.nome_empresa && job.nome_empresa.toLowerCase().includes(searchQuery.toLowerCase()))
       );
       setFilteredJobs(filtered);
     }
@@ -119,10 +119,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleTop: {
-    fontSize: 20,
+    fontSize: 25,
     color: colors.amarelo2,
     fontWeight: '600',
-    marginTop: 10,
+    margin: 10,
     textAlign: 'center',
   },
   searchBar: {
