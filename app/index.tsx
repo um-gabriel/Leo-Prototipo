@@ -50,7 +50,7 @@ export default function Index() {
           </View>
         </View>
 
-        <Link href="/(tabs)/Home/Home" style={styles.linkText}>
+        <Link href="/(tabs)/Geral" style={styles.linkText}>
           Entrar em uma conta
         </Link>
       </View>

@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { colors } from '@/src/components/global';
+import { handleAddVagaCLT } from '../firebase/functions/create/createCandidatura';
+import { verification } from '../firebase/functions/interface';
 
 type Item = {
   nome_vaga: string;
@@ -10,6 +12,8 @@ type Item = {
   modalidade: string;
   email: string;
   localizacao: string;
+  setor: string;
+  regime: string;
 };
 
 type MyModalProps = {
@@ -20,29 +24,48 @@ type MyModalProps = {
 
 const MyModal: React.FC<MyModalProps> = ({ visible, onClose, item }) => {
   return (
-    <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
           {item ? (
             <>
-              <Text style={styles.modalTitle}>{item.nome_vaga}</Text>
-              <Text style={styles.modalSubtitle}>{item.nome_empresa}</Text>
+              <ScrollView contentContainerStyle={styles.content}>
+                <Text style={styles.modalTitle}>{item.nome_vaga}</Text>
+                <Text style={styles.modalSubtitle}>{item.nome_empresa}</Text>
 
-              <Text style={styles.modalText}>Salário: R$ {item.salario}</Text>
-              <Text style={styles.modalText}>Modalidade: {item.modalidade}</Text>
-              <Text style={styles.modalText}>Descrição: {item.descricaoVaga}</Text>
-              <Text style={styles.modalText}>Contato: {item.email}</Text>
-              <Text style={styles.modalText}>Localização: {item.localizacao}</Text>
+                <Text style={styles.modalText}>Salário: R$ {item.salario}</Text>
+                <Text style={styles.modalText}>Email de contato: {item.email}</Text>
+                <Text style={styles.modalText}>Modalidade: {item.modalidade}</Text>
+                <Text style={styles.modalText}>Localização: {item.localizacao}</Text>
+                <Text style={styles.modalText}>Setor social: {item.setor}</Text>
+                <Text style={styles.modalText}>Regime da vaga: {item.regime}</Text>
+                <Text style={styles.modalText}>Descrição: {item.descricaoVaga}</Text>
+              </ScrollView>
 
-              {/* View que empurra os botões pro final */}
-              <View style={{ flex: 1 }} />
-
-              {/* Botões lado a lado */}
               <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={onClose} style={styles.button}>
                   <Text style={styles.buttonText}>Fechar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => console.log('Candidatar-se')} style={styles.button}>
+                <TouchableOpacity
+                  style={styles.button}
+                  // onPress={async () => {
+                  //   const user = verification();
+                  //   if (!user?.uid) return alert('Erro: Usuário não autenticado');
+                  //   try {
+                  //     await handleAddVagaCLT({
+                  //       userId: user.uid,
+                  //       uidCriadorVaga: item.uid_criadorVaga,
+                  //       nome_vaga: item.nome_vaga,
+                  //       nome_candidato: user.name_conta,
+                  //       setLoading,
+                  //     });
+                  //     alert('Candidatura realizada com sucesso!');
+                  //   } catch (error) {
+                  //     alert('Erro ao realizar candidatura.');
+                  //     console.error(error);
+                  //   }
+                  // }}
+                >
                   <Text style={styles.buttonText}>Candidatar</Text>
                 </TouchableOpacity>
               </View>
@@ -59,49 +82,59 @@ const MyModal: React.FC<MyModalProps> = ({ visible, onClose, item }) => {
 const styles = StyleSheet.create({
   modalBackground: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
-    width: '100%',
-    height: '90%',
+    width: '90%',
+    height: '70%',
     backgroundColor: colors.cinza,
+    borderRadius: 16,
     padding: 20,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    justifyContent: 'center',
+  },
+  content: {
+    alignItems: 'center',
+    paddingBottom: 20,
   },
   modalTitle: {
-    fontSize: 45,
+    fontSize: 36,
     fontWeight: 'bold',
-    color: colors.tituloBranco,
-    marginBottom: 10,
+    color: colors.tituloAmarelo,
+    marginBottom: 4,
+    textAlign: 'center',
   },
   modalSubtitle: {
     fontSize: 18,
-    color: colors.amarelo1,
-    marginBottom: 20,
+    fontWeight: '600',
+    color: colors.tituloAmarelo,
+    marginBottom: 16,
+    textAlign: 'center',
   },
   modalText: {
     fontSize: 16,
     color: colors.tituloBranco,
+    textAlign: 'center',
     marginBottom: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 10,
+    justifyContent: 'center',
+    marginTop: 20,
+    gap: 12,
   },
   button: {
     flex: 1,
-    backgroundColor: colors.amarelo2,
+    backgroundColor: colors.tituloAmarelo,
     paddingVertical: 12,
-    marginHorizontal: 5,
     borderRadius: 10,
     alignItems: 'center',
+    marginHorizontal: 5,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: '600',
     color: colors.tituloBranco,
   },
 });
