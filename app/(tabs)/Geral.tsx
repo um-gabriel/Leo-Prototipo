@@ -8,13 +8,15 @@ import {
   TextInput,
   ScrollView,
   Pressable,
+  Button,
 } from 'react-native';
 import { colors } from '@/src/components/global';
 import { useGlobalSearchParams } from 'expo-router';
 import { height, Vagas, width } from '@/src/firebase/functions/interface';
 import { fetchJobs_Geral } from '@/src/firebase/functions/get/getJobs';
-import { StatusBarObject } from '@/src/components/objects';
+import { BotãoInicio, StatusBarObject } from '@/src/components/objects';
 import MyModal from '../../src/components/modal'
+import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 
 type Item = {
   id: string;
@@ -68,7 +70,7 @@ export default function Geral() {
   }, [searchQuery, jobs]);
 
   const renderItem = ({ item }: { item: Vagas }) => (
-    <Pressable onPress={() => openModal(item)} style={styles.item}>
+    <Pressable  style={styles.item}>
       <View style={stylesVagas.item}>
         <Text style={stylesVagas.title}>{item.nome_vaga}</Text>
         <Text style={stylesVagas.subTitle}>{item.nome_empresa}</Text>
@@ -92,7 +94,13 @@ export default function Geral() {
           <Text style={stylesVagas.mode}>Localização:</Text>
           <Text style={stylesVagas.mode}>{item.localizacao}</Text>
         </View>
+
+        <Pressable style={stylesVagas.button} onPress={() => openModal(item)}>
+          <FontAwesome6 name="plus" size={27} color={colors.amarelo2} />
+        </Pressable>
+
       </View>
+
     </Pressable>
   );
 
@@ -208,7 +216,15 @@ const stylesVagas = StyleSheet.create({
     marginTop: 20,
     alignItems: 'center',
   },
+  
   buttonText: { fontSize: 16, color: colors.tituloBranco },
+  button: {
+    width: 40, height: 40, 
+    backgroundColor: colors.preto, 
+    marginTop: 20,
+    justifyContent: 'center', alignItems: 'center',
+    borderRadius: 20,
+  },
 });
 
 

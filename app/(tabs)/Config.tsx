@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { colors } from '@/src/components/global';
-import { TxtInput, Botão, BotãoInicio, StatusBarObject } from '@/src/components/objects';
+import { TxtInput, Botão, StatusBarObject } from '@/src/components/objects';
 import { verification, width } from '@/src/firebase/functions/interface';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/src/firebase/config';
+import { db, auth } from '@/src/firebase/config';
+import { updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { deleteAcount } from '@/src/firebase/functions/delete/deleteAccount';
 
 export default function Config() {
@@ -14,28 +15,56 @@ export default function Config() {
   const [confirmAtualPassword, setConfirmAtualPassword] = useState('');
 
   const handleUpdate = async () => {
-    try {
-      const uid = verification()?.uid;
-      if (!uid) {
-        Alert.alert("Erro", "Usuário não autenticado.");
-        return;
-      }
+    const user = auth.currentUser;
+    const uid = user?.uid;
 
-      const docRef = doc(db, 'Contas', uid);
-      await updateDoc(docRef, { email: newEmail });
-
-      Alert.alert("Sucesso", "Campo atualizado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao atualizar o documento:", error);
-      Alert.alert("Erro", "Não foi possível atualizar o documento.");
-    } finally {
-      console.log("A função update foi feita!")
+    if (!user || !uid) {
+      Alert.alert("Erro", "Usuário não autenticado.");
+      return;
     }
-  };
 
-  function delet() {
-      deleteAcount()
-  }
+    if (!confirmAtualPassword) {
+      Alert.alert("Erro", "Confirme sua senha atual para continuar.");
+      return;
+    }
+
+    Alert.alert(
+      "Confirmar alterações",
+      "Deseja realmente alterar os dados da conta?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "Confirmar",
+          onPress: async () => {
+            try {
+              const credential = EmailAuthProvider.credential(
+                user.email || '',
+                confirmAtualPassword
+              );
+              await reauthenticateWithCredential(user, credential);
+
+              if (newEmail) await updateEmail(user, newEmail);
+              if (newPassword) await updatePassword(user, newPassword);
+
+              const docRef = doc(db, 'Contas', uid);
+              await updateDoc(docRef, {
+                ...(newName && { nome: newName }),
+                ...(newEmail && { email: newEmail }),
+              });
+
+              Alert.alert("Sucesso", "Dados atualizados com sucesso!");
+            } catch (error: any) {
+              console.error("Erro ao atualizar:", error);
+              Alert.alert("Erro", error.message || "Falha na atualização.");
+            }
+          }
+        }
+      ]
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -53,14 +82,12 @@ export default function Config() {
             placeholder="Nome novo"
             placeholderTextColor={colors.tituloBranco}
           />
-
           <TxtInput
             value={newEmail}
             onChangeText={setNewEmail}
             placeholder="Email novo"
             placeholderTextColor={colors.tituloBranco}
           />
-
           <TxtInput
             value={newPassword}
             onChangeText={setNewPassword}
@@ -68,26 +95,25 @@ export default function Config() {
             placeholderTextColor={colors.tituloBranco}
             secureTextEntry
           />
-
           <TxtInput
             value={confirmAtualPassword}
             onChangeText={setConfirmAtualPassword}
-            placeholder="Confirme sua senha"
+            placeholder="Senha atual"
             placeholderTextColor={colors.tituloBranco}
             secureTextEntry
           />
 
-          <TouchableOpacity onPress={() => handleUpdate} style={styles.button} >
+          <TouchableOpacity onPress={handleUpdate} style={styles.button}>
             <Text style={styles.buttonText}>Salvar Alterações</Text>
           </TouchableOpacity>
         </View>
 
         {/* Seção de Deletar Conta */}
-        <View style={styles.section_excluid} >
-          <Text style={{fontSize: 20, color: colors.tituloBranco, marginBottom: 20,}} >
-              Deseja excluir sua conta
+        <View style={styles.section_excluid}>
+          <Text style={{ fontSize: 20, color: colors.tituloBranco, marginBottom: 20 }}>
+            Deseja excluir sua conta?
           </Text>
-          <Botão onPress={() => delet()}>
+          <Botão onPress={deleteAcount}>
             <Text style={styles.deleteText}>Deletar sua conta</Text>
           </Botão>
         </View>
