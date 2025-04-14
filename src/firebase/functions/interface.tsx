@@ -4,6 +4,7 @@ import { doc, getDoc } from "firebase/firestore";
 
 export interface Users {
     email: string,
+
     name_conta: string,
     senha: string,
     telefone: string,
@@ -15,7 +16,7 @@ export interface Empresas {
     uid: string,
 
     email: string,
-    name_conta: string,
+    nome_empresa: string,
     password: string,
     setor: string,
     descricao: string,
@@ -38,7 +39,7 @@ export interface Vagas {
     createdAt: Date,
 };
 
-export interface Freelancer {
+export interface servicoFreelancer {
     servico_id: string,
     uid_criadorServico: string,
     titulo_servico: string;

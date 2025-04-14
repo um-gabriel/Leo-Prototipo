@@ -42,7 +42,7 @@ export default function Account() {
   const renderUserEmpresa = ({ item }: { item: Empresas }) => (
     <View style={styles.data}>
       <View style={styles.areaTop}>
-        <Text style={styles.title}>{item.nomeUsuario}</Text>
+        <Text style={styles.title}>{item.nome_empresa}</Text>
         <Text style={styles.subTitle}>{item.email}</Text>
       </View>
       <View style={styles.areaLow}>

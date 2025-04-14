@@ -28,38 +28,51 @@ export default function Config() {
       return;
     }
 
+    // 🔐 Explicação de segurança
     Alert.alert(
-      "Confirmar alterações",
-      "Deseja realmente alterar os dados da conta?",
+      "Segurança primeiro",
+      "Antes de alterar dados sensíveis como e-mail ou senha, o Firebase exige que você confirme sua senha atual para garantir sua segurança.",
       [
         {
-          text: "Cancelar",
-          style: "cancel"
-        },
-        {
-          text: "Confirmar",
-          onPress: async () => {
-            try {
-              const credential = EmailAuthProvider.credential(
-                user.email || '',
-                confirmAtualPassword
-              );
-              await reauthenticateWithCredential(user, credential);
+          text: "Entendi",
+          onPress: () => {
+            Alert.alert(
+              "Confirmar alterações",
+              "Deseja realmente alterar os dados da conta?",
+              [
+                { text: "Cancelar", style: "cancel" },
+                {
+                  text: "Confirmar",
+                  onPress: async () => {
+                    try {
+                      const credential = EmailAuthProvider.credential(
+                        user.email || '',
+                        confirmAtualPassword
+                      );
+                      await reauthenticateWithCredential(user, credential);
 
-              if (newEmail) await updateEmail(user, newEmail);
-              if (newPassword) await updatePassword(user, newPassword);
+                      if (newEmail) await updateEmail(user, newEmail);
+                      if (newPassword) await updatePassword(user, newPassword);
 
-              const docRef = doc(db, 'Contas', uid);
-              await updateDoc(docRef, {
-                ...(newName && { nome: newName }),
-                ...(newEmail && { email: newEmail }),
-              });
+                      const docRef = doc(db, 'Contas', uid);
+                      await updateDoc(docRef, {
+                        ...(newName && { nome: newName }),
+                        ...(newEmail && { email: newEmail }),
+                      });
 
-              Alert.alert("Sucesso", "Dados atualizados com sucesso!");
-            } catch (error: any) {
-              console.error("Erro ao atualizar:", error);
-              Alert.alert("Erro", error.message || "Falha na atualização.");
-            }
+                      Alert.alert("Sucesso", "Dados atualizados com sucesso!");
+                      setNewName('');
+                      setNewEmail('');
+                      setNewPassword('');
+                      setConfirmAtualPassword('');
+                    } catch (error: any) {
+                      console.error("Erro ao atualizar:", error);
+                      Alert.alert("Erro", error.message || "Falha na atualização.");
+                    }
+                  }
+                }
+              ]
+            );
           }
         }
       ]
@@ -154,7 +167,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  button: {        
+  button: {
     width: '90%',
     height: 50,
     backgroundColor: colors.amarelo2,
@@ -170,7 +183,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.preto,
   },
-
   section_excluid: {
     width: width * 0.9,
     minHeight: 150,

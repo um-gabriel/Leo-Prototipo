@@ -99,7 +99,7 @@ export default function Layout() {
               backgroundColor: colors.fundo2, // Definindo a cor de fundo do cabeçalho
             },
             drawerIcon: ({ color }) => (
-              <Ionicons name="settings-outline" size={24} color={color} /> // Ícone de Configurações
+              <Ionicons name="settings-outline" size={24} color={color} /> // Ícone de Configurações                    
             ),
           }}
         />

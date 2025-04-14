@@ -68,48 +68,51 @@ export default function Home() {
           </TouchableOpacity>
 
         </ScrollView>
+        
+        <View style={styles.AreaVagas}>
+            <Text style={styles.SubTitle}>Vagas relacionadas a tecnologia</Text>
+            {loading ? (
+              <ActivityIndicator size="large" color={colors.amarelo1} />
+            ) : (
+              jobs.map((item) => (
+                <View key={item.id} style={stylesVaga.item}>
+                  <Text style={stylesVaga.title}>{item.nome_vaga}</Text>
+                  <Text style={stylesVaga.subTitle}>{item.nome_empresa}</Text>
+                  <TextInfo label="Salário: R$" value={item.salario} />
+                  <TextInfo label="Modalidades:" value={item.modalidade} />
+                  <TextInfo label="Contato:" value={item.email} />
+                  <TextInfo label="Localização:" value={item.localizacao} />
+                  <TouchableOpacity
+                    style={stylesVaga.buttonCandidatar}
+                    onPress={async () => {
+                      const user = verification();
+                      if (!user?.uid) return alert('Erro: Usuário não autenticado');
+                      try {
+                        await handleAddVagaCLT({
+                          userId: user.uid,
+                          uidCriadorVaga: item.uid_criadorVaga,
+                          nome_vaga: item.nome_vaga,
+                          nome_candidato: user.name_conta,
+                          setLoading,
+                        });
+                        alert('Candidatura realizada com sucesso!');
+                      } catch (error) {
+                        alert('Erro ao realizar candidatura.');
+                        console.error(error);
+                      }
+                    }}
+                  >
+                    <Text style={stylesVaga.buttonText}>Candidatar-se</Text>
+                  </TouchableOpacity>
+                </View>
+              ))
+            )}
+            <BotãoInicio onPress={() => CriarVagas('Vagas-trabalho')}>
+              <Text style={styles.TextButton}>Clique aqui para ver mais</Text>
+            </BotãoInicio>
+          </View>
+      </View>
 
-          <Text style={styles.SubTitle}>Vagas de emprego</Text>
-          {loading ? (
-            <ActivityIndicator size="large" color={colors.amarelo1} />
-          ) : (
-            jobs.map((item) => (
-              <View key={item.id} style={stylesVaga.item}>
-                <Text style={stylesVaga.title}>{item.nome_vaga}</Text>
-                <Text style={stylesVaga.subTitle}>{item.nome_empresa}</Text>
-                <TextInfo label="Salário: R$" value={item.salario} />
-                <TextInfo label="Modalidades:" value={item.modalidade} />
-                <TextInfo label="Contato:" value={item.email} />
-                <TextInfo label="Localização:" value={item.localizacao} />
-                <TouchableOpacity
-                  style={stylesVaga.buttonCandidatar}
-                  onPress={async () => {
-                    const user = verification();
-                    if (!user?.uid) return alert('Erro: Usuário não autenticado');
-                    try {
-                      await handleAddVagaCLT({
-                        userId: user.uid,
-                        uidCriadorVaga: item.uid_criadorVaga,
-                        nome_vaga: item.nome_vaga,
-                        nome_candidato: user.name_conta,
-                        setLoading,
-                      });
-                      alert('Candidatura realizada com sucesso!');
-                    } catch (error) {
-                      alert('Erro ao realizar candidatura.');
-                      console.error(error);
-                    }
-                  }}
-                >
-                  <Text style={stylesVaga.buttonText}>Candidatar-se</Text>
-                </TouchableOpacity>
-              </View>
-            ))
-          )}
-          <BotãoInicio onPress={() => CriarVagas('Vagas-trabalho')}>
-            <Text style={styles.TextButton}>Clique aqui para ver mais</Text>
-          </BotãoInicio>
-        </View>
       </ScrollView>
     </View>
   );
@@ -147,6 +150,7 @@ const styles = StyleSheet.create({
   BoxSetor: {
     width: '100%', flexDirection: 'row', alignItems: 'center', marginBottom: 10
   },
+  AreaVagas: { width: width * 1, alignItems: 'center', marginTop: 20 },
   boxImage: {
     width: 50, height: 50, borderRadius: 25,
      alignItems: 'center', justifyContent: 'center'

@@ -8,15 +8,14 @@ import {
   TextInput,
   ScrollView,
   Pressable,
-  Button,
 } from 'react-native';
 import { colors } from '@/src/components/global';
 import { useGlobalSearchParams } from 'expo-router';
-import { height, Vagas, width } from '@/src/firebase/functions/interface';
+import { Vagas, width } from '@/src/firebase/functions/interface';
 import { fetchJobs_Geral } from '@/src/firebase/functions/get/getJobs';
-import { BotãoInicio, StatusBarObject } from '@/src/components/objects';
+import { StatusBarObject } from '@/src/components/objects';
 import MyModal from '../../src/components/modal'
-import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
+
 
 type Item = {
   id: string;
@@ -96,7 +95,7 @@ export default function Geral() {
         </View>
 
         <Pressable style={stylesVagas.button} onPress={() => openModal(item)}>
-          <FontAwesome6 name="plus" size={27} color={colors.amarelo2} />
+            <Text style={{color: colors.preto, fontSize: 17}} >Visualizar melhor</Text>
         </Pressable>
 
       </View>
@@ -219,11 +218,12 @@ const stylesVagas = StyleSheet.create({
   
   buttonText: { fontSize: 16, color: colors.tituloBranco },
   button: {
-    width: 40, height: 40, 
-    backgroundColor: colors.preto, 
-    marginTop: 20,
-    justifyContent: 'center', alignItems: 'center',
-    borderRadius: 20,
+    width: '80%',
+    height: 35,
+    backgroundColor: colors.amarelo2,
+    justifyContent: "center", alignItems: "center",
+    borderRadius: 10, flexDirection: "row",
+    marginTop: 15,
   },
 });
 
