@@ -7,7 +7,7 @@ import { collection, doc, getDocs, increment, updateDoc } from 'firebase/firesto
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { db } from '@/src/firebase/config';
 import { colors } from '@/src/components/global';
-import { Empresas, Freelancer, height, Users, width } from '@/src/firebase/functions/interface';
+import { Empresas, Freelancer, height, servicoFreelancer, Users, width } from '@/src/firebase/functions/interface';
 import { useRouter } from 'expo-router';
 import { BotãoInicio, StatusBarObject } from '@/src/components/objects';
 import { fetchEmpresas } from '@/src/firebase/functions/get/getCompany';
@@ -83,14 +83,14 @@ export default function Others() {
     getFreelancerVagas({ setFreelancer, setFilteredFreelancer, setLoading });
   }, []);
 
-  const renderItemEmpresa = ({ item }) => (
+  const renderItemEmpresa = ({ item }: { item: Empresas }  ) => (
     <TouchableOpacity style={styles.cardEmpresa} onPress={() => { setSelectedEmpresa(item); setAbrirModal(true); }}>
-      <Text style={styles.empresaTitulo}>{item.name_conta}</Text>
+      <Text style={styles.empresaTitulo}>{item.nome_empresa}</Text>
       <Text style={styles.empresaTexto}>{item.email}</Text>
     </TouchableOpacity>
   );
 
-  const renderItemFreelancer = ({ item }) => (
+  const renderItemFreelancer = ({ item } : { item: servicoFreelancer } ) => (
     <View style={styles.cardFreelancer}>
       <Text style={styles.freelancerTitulo}>{item.titulo_servico}</Text>
       <Text style={styles.freelancerTexto}>Responsável: {item.responsavel}</Text>
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     width: 180,
     backgroundColor: colors.cinza,
     borderRadius: 12,
-    padding: 25,
+    padding: 15,
     marginRight: 10,
     marginTop: 10,
     alignItems: 'center'

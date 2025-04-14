@@ -40,7 +40,7 @@ export const FormEmpresa = () => {
       const data = {
         uid: auth.currentUser?.uid,
         email: email,
-        nomeUsuario: name,
+        nome_empresa: name,
         senha: password,
         descricao,
         cnpj,
