@@ -28,7 +28,7 @@ export async function dados_usuario(passData) {
     }
 };
 
-// Função para buscar as vagas do usuário
+// Função para buscar as vagas do usuário EMPRESA
 export async function userVagas (userVagasFunc) {
   const { setUserVagasList, setFilteredVagas, setLoading } = userVagasFunc
   const userAuth = verification();
@@ -49,4 +49,27 @@ export async function userVagas (userVagasFunc) {
   } finally {
       setLoading(false);
   }
-  };
+};
+
+// Função para buscar as vagas do usuário FREELANCER
+export async function userServicos (userServicosFunc) {
+  const { setUserServicosList, setFilteredServicos, setLoading } = userServicosFunc
+  const userAuth = verification();
+  try {
+      const q = query(
+          collection(db, "Servicos-freelancer"),
+          where("uid_criadorServico", "==", userAuth.uid)
+      );
+      const querySnapshot = await getDocs(q);      
+      const UsersServicosArray = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+      }));
+      setUserServicosList(UsersServicosArray);
+      setFilteredServicos(UsersServicosArray); // Inicializa com todos os dados
+  } catch (error) {
+      console.error("Erro vc não esta logado:", error);
+  } finally {
+      setLoading(false);
+  }
+};

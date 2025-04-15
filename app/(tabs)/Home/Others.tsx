@@ -87,6 +87,8 @@ export default function Others() {
     <TouchableOpacity style={styles.cardEmpresa} onPress={() => { setSelectedEmpresa(item); setAbrirModal(true); }}>
       <Text style={styles.empresaTitulo}>{item.nome_empresa}</Text>
       <Text style={styles.empresaTexto}>{item.email}</Text>
+      <Text style={styles.empresaTexto}>Setor: {item.setor}</Text>
+      <Text style={styles.empresaTexto}>CNPJ: {item.cnpj}</Text>
     </TouchableOpacity>
   );
 
@@ -98,6 +100,10 @@ export default function Others() {
       <Text style={styles.freelancerTexto}>E-mail: {item.email}</Text>
       <Text style={styles.freelancerTexto}>Localização: {item.localizacao_servico}</Text>
       <Text style={styles.freelancerTexto}>Descrição: {item.descricao_servico}</Text>
+
+      <View style={styles.cardFreelancer_button} >
+        <Text style={styles.cardFreelancer_button_text} >Visualizar mais</Text>
+      </View>
     </View>
   );
 
@@ -126,10 +132,12 @@ export default function Others() {
           renderItem={renderItemEmpresa}
         />
 
-        <Text style={styles.sectionTitle}>Carrossel de Vagas</Text>
-        <TouchableOpacity onPress={handleAlert} style={styles.infoIcon}>
-          <MaterialCommunityIcons name="information-outline" size={30} color="white" />
-        </TouchableOpacity>
+        <View style={styles.area_carrosel_titulo} >
+            <Text style={styles.sectionTitle}>Carrossel de Vagas</Text>
+            <TouchableOpacity onPress={handleAlert} style={styles.infoIcon}>
+              <MaterialCommunityIcons name="information-outline" size={30} color="white" />
+            </TouchableOpacity>
+        </View>
 
         {currentJob && (
           <View style={styles.cardVaga}>
@@ -194,10 +202,11 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   sectionTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     color: colors.tituloAmarelo,
     marginTop: 20,
+    marginBottom: 15
   },
   loadingContainer: {
     flex: 1,
@@ -213,14 +222,24 @@ const styles = StyleSheet.create({
     width: 180,
     backgroundColor: colors.cinza,
     borderRadius: 12,
-    padding: 15,
+    padding: 13,
     marginRight: 10,
     marginTop: 10,
     alignItems: 'center'
   },
+  area_carrosel_titulo: {
+    width: width * 1,
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
+  },
+  infoIcon: {
+    marginTop: 30,
+  },
   empresaTitulo: {
     color: colors.tituloBranco,
     fontSize: 20,
+    marginBottom: 5,
     fontWeight: 'bold',
   },
   empresaTexto: {
@@ -229,18 +248,34 @@ const styles = StyleSheet.create({
   },
   cardFreelancer: {
     backgroundColor: colors.cinza,
-    padding: 12,
+    padding: 14,
+    maxWidth: width * 0.95,
     borderRadius: 10,
     marginBottom: 10,
   },
   freelancerTitulo: {
     color: colors.tituloAmarelo,
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: 'bold',
+    marginBottom: 5,
   },
   freelancerTexto: {
     color: colors.tituloBranco,
-    fontSize: 14,
+    fontSize: 16,
+  },
+  cardFreelancer_button: {
+    width: '80%',
+    height: 40,
+    backgroundColor: colors.amarelo2,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+    flexDirection: "row",
+  },
+  cardFreelancer_button_text: {
+    fontSize: 17, 
+    color: colors.preto,
   },
   cardVaga: {
     backgroundColor: colors.cinza,
@@ -249,18 +284,21 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   cardTitle: {
-    fontSize: 22,
+    fontSize: 30,
     color: colors.tituloAmarelo,
     fontWeight: 'bold',
+    marginBottom: 8,
   },
   cardText: {
     color: colors.tituloBranco,
     marginTop: 4,
+    fontSize: 16,
   },
   cardButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 15,
+    marginTop: 25,
+    marginBottom: 10,
   },
   buttonLike: {
     backgroundColor: 'green',
@@ -306,8 +344,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
-  infoIcon: {
-    alignSelf: 'flex-end',
-    marginRight: 10,
-  }
 });

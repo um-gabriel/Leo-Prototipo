@@ -19,11 +19,48 @@ export default function FormVagaCLT() {
   const [regime, setRegime] = useState("");
   const [setor, setSetor] = useState("");
 
+  
+  const buscarDadosDaConta = async () => {
+    const db = getFirestore();
+    const uid = auth.currentUser?.uid;
+  
+    if (!uid) {
+      console.error("Usuário não autenticado.");
+      return null;
+    }
+  
+    try {
+      const docRef = doc(db, "Contas", uid); // nome da sua coleção aqui
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() };
+      } else {
+        console.warn("Documento do usuário não encontrado.");
+        return null;
+      }
+    } catch (erro) {
+      console.error("Erro ao buscar dados do usuário:", erro);
+      return null;
+    }
+  };
+  
+
   async function createVagaCLT() {
     if (!nome_vaga || !descricao || !regime || !nome_empresa || !email) {
       Alert.alert("Preencha todos os campos obrigatórios.");
       return;
     }
+      const tipoConta = verification()?.tipo_conta;
+      const dados = await buscarDadosDaConta();
+      let tipo = dados.tipo_conta
+    
+      // Verifica se é empresa
+      if (tipo !== "Empresa") {
+        Alert.alert("Apenas contas do tipo Empresa podem criar um serviço.");
+        console.log("Apenas contas do tipo Empresa podem criar um serviço.", tipo);
+        return;
+      }
 
     setLoading(true);
     try {

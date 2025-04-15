@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { Botão } from '@/src/components/objects';
 import { colors } from '@/src/components/global';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getFirestore, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../config';
 import { verification } from '../functions/interface';
 import { router } from 'expo-router';
@@ -19,19 +19,54 @@ export default function FormServicosFree() {
   const [modalidade_servico, setModalidade_servico] = useState("");
   const [localizacao_servico, setLocalizacao_servico] = useState("");
 
+  const buscarDadosDaConta = async () => {
+    const db = getFirestore();
+    const uid = auth.currentUser?.uid;
+  
+    if (!uid) {
+      console.error("Usuário não autenticado.");
+      return null;
+    }
+  
+    try {
+      const docRef = doc(db, "Contas", uid); // nome da sua coleção aqui
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() };
+      } else {
+        console.warn("Documento do usuário não encontrado.");
+        return null;
+      }
+    } catch (erro) {
+      console.error("Erro ao buscar dados do usuário:", erro);
+      return null;
+    }
+  };
+
   async function createServicoFree() {
     if (!titulo_servico || !descricao_servico || !categoria_servico) {
       Alert.alert("Preencha os campos obrigatórios.");
       return;
     }
-
+  
+    const tipoConta = verification()?.tipo_conta;
+    const dados = await buscarDadosDaConta();
+    let tipo = dados.tipo_conta
+  
+    // Verifica se é empresa
+    if (tipo !== "Freelancer") {
+      Alert.alert("Apenas contas do tipo Freelancer podem criar um serviço.");
+      console.log("Apenas contas do tipo Freelancer podem criar um serviço.", tipo);
+      return;
+    }
+  
     setLoading(true);
     try {
       await addDoc(collection(db, "Servicos-freelancer"), {
         titulo_servico,
-        responsavel_servico: verification().name_conta,
+        responsavel_servico: verification()?.name_conta,
         email,
-        // servico_id,
         categoria_servico,
         descricao_servico,
         valor_servico,
@@ -41,7 +76,7 @@ export default function FormServicosFree() {
         dataPublicacao_servico: serverTimestamp(),
         uid_criadorServico: auth.currentUser?.uid,
       });
-
+  
       Alert.alert("Serviço criado com sucesso!");
       setTitulo_servico("");
       setCategoria_servico("");
@@ -50,7 +85,7 @@ export default function FormServicosFree() {
       setTempo_execucao("");
       setModalidade_servico("");
       setLocalizacao_servico("");
-      router.replace("/(tabs)/Home/Home")
+      router.replace("/(tabs)/Home/Home");
     } catch (error) {
       console.error("Erro ao criar serviço:", error);
       Alert.alert("Erro ao criar serviço.");
@@ -58,6 +93,7 @@ export default function FormServicosFree() {
       setLoading(false);
     }
   }
+  
 
   return (
     <ScrollView style={styles.form} contentContainerStyle={{ paddingBottom: 40 }}>
