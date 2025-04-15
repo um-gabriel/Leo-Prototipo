@@ -23,6 +23,20 @@ export interface Empresas {
     cnpj: number,
     tipo_conta: string,
 }
+export interface Freelancer {
+    uid: string,
+
+    descricao: string,
+    email: string,
+    links: string,
+    nomeFree: string,
+    regiao: string,
+    senha: string,
+    setor: string,
+    cnpj: number,
+    tipo_conta: string,
+}
+
 
 export interface Vagas {
     vaga_id: string,

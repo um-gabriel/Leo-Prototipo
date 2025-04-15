@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '@/src/components/global';
-import { Users, Vagas, width, height, Empresas } from '@/src/firebase/functions/interface';
+import { Users, Vagas, width, height, Empresas, Freelancer, servicoFreelancer } from '@/src/firebase/functions/interface';
 import { useRouter } from 'expo-router';
-import { dados_usuario, userVagas } from '@/src/firebase/functions/get/getInforUser';
+import { dados_usuario, userServicos, userVagas } from '@/src/firebase/functions/get/getInforUser';
 import { handleDeleteVaga } from '@/src/firebase/functions/delete/deleteJob';
 import { StatusBarObject } from '@/src/components/objects';
 import { signOut } from 'firebase/auth';
@@ -16,12 +16,16 @@ export default function Account() {
   const [loading, setLoading] = useState(true);
   const [userVagasList, setUserVagasList] = useState<Vagas[]>([]);
   const [filteredVagas, setFilteredVagas] = useState<Vagas[]>([]);
+  const [userServicosList, setUserServicosList] = useState<Vagas[]>([]);
+  const [filteredServicos, setFilteredServicos] = useState<Vagas[]>([]);
   const [filteredUsersData, setFilteredUsersData] = useState<Users[]>([]);
   const [tipoConta, setTipoConta] = useState<string | null>(null);
 
   useEffect(() => {
     const userVagaData = { setUserVagasList, setFilteredVagas, setLoading };
     userVagas(userVagaData);
+    const userServicosFunc = { setUserServicosList, setFilteredServicos, setLoading };
+    userServicos(userServicosFunc);
 
     const passData = { setUsersData, setFilteredUsersData, setTipoConta, setLoading };
     dados_usuario(passData);
@@ -59,7 +63,6 @@ export default function Account() {
       </View>
     </View>
   );
-
   const renderUserPessoa = ({ item }: { item: Users }) => (
     <View style={styles.data}>
       <View style={styles.areaTop}>
@@ -79,6 +82,27 @@ export default function Account() {
         <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Senha:</Text><Text style={styles.areaLow_low_text2}>{item.senha}</Text></View>
         <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Telefone:</Text><Text style={styles.areaLow_low_text2}>{item.telefone}</Text></View>
         <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Links:</Text><Text style={styles.areaLow_low_text2}>{item.links_externos}</Text></View>
+      </View>
+    </View>
+  );
+  const renderUserFreelancer = ({ item }: { item: Freelancer } ) => (
+    <View style={styles.data}>
+      <View style={styles.areaTop}>
+        <Text style={styles.title}>{item.nomeFree}</Text>
+        <Text style={styles.subTitle}>{item.email}</Text>
+      </View>
+      <View style={styles.areaLow}>
+        <View style={styles.areaLow_top}>
+          <View style={styles.areaLow_areaInfor}>
+            <Text style={styles.areaLow_top_text}>Informações da conta</Text>
+            <AntDesign name="rightcircle" size={30} color={colors.amarelo2} />
+          </View>
+        </View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Contato:</Text><Text style={styles.areaLow_low_text2}>{item.email}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Setor:</Text><Text style={styles.areaLow_low_text2}>{item.setor}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Região de atuação:</Text><Text style={styles.areaLow_low_text2}>{item.regiao}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Links:</Text><Text style={styles.areaLow_low_text2}>{item.links}</Text></View>
+        <View style={styles.areaLow_low}><Text style={styles.areaLow_low_text}>Descrição:</Text><Text style={styles.areaLow_low_text2}>{item.descricao}</Text></View>
       </View>
     </View>
   );
@@ -111,6 +135,34 @@ export default function Account() {
       <Text style={stylesVagas.text}>Setor: {item.setor}</Text>
     </View>
   );
+  const renderServicoCard = ({ item }: { item: servicoFreelancer }) => (
+    <View style={stylesVagas.item}>
+      <View style={stylesVagas.item_areaTitle}>
+        <MaterialCommunityIcons name="information-outline" size={30} color="white" />
+        <Text style={stylesVagas.title}>{item.titulo_servico}</Text>
+        <MaterialCommunityIcons
+          name="delete"
+          size={30}
+          color="red"
+          onPress={() => {
+            Alert.alert(
+              "Excluir vaga",
+              `Deseja realmente excluir a vaga "${item.name}"?`,
+              [
+                { text: "Cancelar", style: "cancel" },
+                { text: "Excluir", onPress: () => handleDeleteVaga(item.id), style: "destructive" }
+              ]
+            );
+          }}
+        />
+      </View>
+      <Text style={stylesVagas.text}>Empresa: {item.responsavel}</Text>
+      <Text style={stylesVagas.text}>Email: {item.email}</Text>
+      <Text style={stylesVagas.text}>Data de publicação: {item.dataPublicacao_servico}</Text>
+      <Text style={stylesVagas.text}>Modalidade: {item.modalidade_servico}</Text>
+      <Text style={stylesVagas.text}>Valor: R$ {item.valor_servico}</Text>
+    </View>
+  );
 
   const handleSignOut = async () => {
     try {
@@ -137,6 +189,13 @@ export default function Account() {
             data={filteredUsersData}
             keyExtractor={(item) => item.uid}
             renderItem={renderUserPessoa}
+            scrollEnabled={false}
+          />
+        ) : tipoConta === 'Freelancer' ? (
+          <FlatList
+            data={filteredUsersData}
+            keyExtractor={(item) => item.uid}
+            renderItem={renderUserFreelancer}
             scrollEnabled={false}
           />
         ) : (
@@ -167,7 +226,7 @@ export default function Account() {
           </TouchableOpacity>
         </View>
 
-        {(tipoConta === 'Empresa' || tipoConta === 'Freelancer') && (
+        {(tipoConta === 'Empresa' ) && (
           <>
             <Text style={styles.sectionTitle}>Suas vagas criadas:</Text>
             <View style={stylesVagas.AreaVagasView}>
@@ -184,6 +243,25 @@ export default function Account() {
             </View>
           </>
         )}
+
+          {/* {tipoConta === 'Freelancer' && (
+            <>
+              <Text style={styles.sectionTitle}>Seus serviços freelancer:</Text>
+              <View style={stylesVagas.AreaVagasView}>
+                {filteredServicos.length > 0 ? (
+                  <FlatList
+                    data={filteredServicos}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderServicoCard}
+                    scrollEnabled={false}
+                  />
+                ) : (
+                  <Text style={stylesVagas.emptyMessage}>Você não tem serviços postados ainda.</Text>
+                )}
+              </View>
+            </>
+          )} */}
+
       </ScrollView>
     </View>
   );
