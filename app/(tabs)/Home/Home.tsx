@@ -6,8 +6,88 @@ import { BotãoInicio, StatusBarObject } from '@/src/components/objects';
 import { useRouter } from 'expo-router';
 import { width, height, Vagas, verification } from '@/src/firebase/functions/interface';
 import { getVagas } from '@/src/firebase/functions/get/getJobs';
-import { handleAddVagaCLT } from '@/src/firebase/functions/create/createCandidatura';
+import { createApplication } from '@/src/firebase/functions/create/createCandidatura';
 
+export default function Home() {
+  const [jobs, setJobs] = useState<Vagas[]>([]);
+  const [loading, setLoading] = useState(true); // Estado de loading para carregar as vagas
+  const [isApplying, setIsApplying] = useState(false); // NOVO: Estado de loading para a candidatura
+  const router = useRouter();
+
+  // ... (outras funções como boxSetores, CriarVagas, TextInfo)
+
+  useEffect(() => {
+    getVagas({ setJobs, setFilteredJobs: setJobs, setLoading });
+  }, []);
+
+  // ... (restante do código JSX)
+
+  return (
+    <View style={styles.container}>
+      {/* ... (StatusBarObject, AreaTop) ... */}
+
+      <ScrollView>
+        {/* ... (Áreas de vagas) ... */}
+
+        <View style={styles.AreaVagas}>
+          <Text style={styles.SubTitle}>Vagas relacionadas a tecnologia</Text>
+          {loading ? ( // Loading das vagas
+            <ActivityIndicator size="large" color={colors.amarelo1} />
+          ) : (
+            jobs.map((item) => (
+              // Certifique-se de que 'item' tem um campo 'id' que é o ID do documento
+              <View key={item.id} style={stylesVaga.item}>
+                <Text style={stylesVaga.title}>{item.nome_vaga}</Text>
+                <Text style={stylesVaga.subTitle}>{item.nome_empresa}</Text>
+                {/* ... (outras informações da vaga) ... */}
+
+                <TouchableOpacity
+                  style={stylesVaga.buttonCandidatar}
+                  // Desabilita o botão enquanto uma candidatura está sendo processada
+                  onPress={async () => {
+                    const user = verification(); // Assumindo que verification() retorna { uid: string, name_conta: string } | null
+                    if (!user?.uid) {
+                      alert('Erro: Usuário não autenticado');
+                      return;
+                    }
+
+                    // NOVO: Inicia o estado de applying
+                    setIsApplying(true);
+
+                    try {
+                      // CHAMA A NOVA FUNÇÃO
+                      await createApplication(item.id, item.uid_criadorVaga); // Usa item.id para jobId
+                      alert('Candidatura realizada com sucesso!');
+                      // Opcional: Desabilitar o botão para esta vaga após candidatar
+                    } catch (error) {
+                      alert('Erro ao realizar candidatura.');
+                      console.error(error);
+                    } finally {
+                      // NOVO: Finaliza o estado de applying
+                      setIsApplying(false);
+                    }
+                  }}
+                  // NOVO: Propriedade disabled para desabilitar o botão
+                  disabled={isApplying}
+                >
+                   {/* NOVO: Mostra um indicador de loading no botão enquanto está aplicando */}
+                  {isApplying ? (
+                    <ActivityIndicator size="small" color={colors.tituloBranco} />
+                  ) : (
+                    <Text style={stylesVaga.buttonText}>Candidatar-se</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            ))
+          )}
+          {/* ... (BotãoInicio) ... */}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+/*
 export default function Home() {
   const [jobs, setJobs] = useState<Vagas[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,18 +197,40 @@ export default function Home() {
     </View>
   );
 }
+*/
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.preto },
+  container: { 
+    flex: 1, 
+    backgroundColor: colors.preto 
+  },
+
   AreaTop: {
     padding: 22,
     // backgroundColor: colors.fundo2,
-    borderBottomLeftRadius: 50, borderBottomRightRadius: 50,
-    alignItems: 'center', justifyContent: 'center'
+    borderBottomLeftRadius: 50, 
+    borderBottomRightRadius: 50,
+    alignItems: 'center', 
+    justifyContent: 'center'
   },
-  AreaTop_Title: { fontSize: 50, color: colors.amarelo2, fontWeight: '600' },
-  AreaTop_subTitle: { fontSize: 17, color: colors.tituloBranco, textAlign: 'center' },
-  content: { padding: 15, alignItems: 'center' },
+
+  AreaTop_Title: { 
+    fontSize: 50, 
+    color: colors.amarelo2, 
+    fontWeight: '600' 
+  },
+
+  AreaTop_subTitle: { 
+    fontSize: 17, 
+    color: colors.tituloBranco, 
+    textAlign: 'center' 
+  },
+
+  content: { 
+    padding: 15, 
+    alignItems: 'center' 
+  },
+
   BoxContainerEmpresas: {
     flexDirection: 'column',
     alignItems: 'center',
@@ -140,42 +242,104 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
+
   BoxContainerEmpresas_text: {
     color: colors.tituloBranco,
     fontSize: 14,
     marginTop: 5,
     textAlign: 'center',
   },
-  SubTitle: { fontSize: 25, fontWeight: 'bold', color: colors.tituloBranco, marginVertical: 15 },
+
+  SubTitle: { 
+    fontSize: 25, 
+    fontWeight: 'bold', 
+    color: colors.tituloBranco, 
+    marginVertical: 15 
+  },
+
   BoxSetor: {
-    width: '100%', flexDirection: 'row', alignItems: 'center', marginBottom: 10
+    width: '100%', 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginBottom: 10
   },
-  AreaVagas: { width: width * 1, alignItems: 'center', marginTop: 20 },
+
+  AreaVagas: { 
+    width: width * 1, 
+    alignItems: 'center', 
+    marginTop: 20 
+  },
+
   boxImage: {
-    width: 50, height: 50, borderRadius: 25,
-     alignItems: 'center', justifyContent: 'center'
+    width: 50, 
+    height: 50, 
+    borderRadius: 25,
+    alignItems: 'center', 
+    justifyContent: 'center'
   },
-  BoxText: { fontSize: 20, color: colors.tituloBranco, marginLeft: 20 },
-  TextButton: { fontSize: 17, color: colors.tituloBranco, marginTop: 10 },
+
+  BoxText: { 
+    fontSize: 20, 
+    color: colors.tituloBranco, 
+    marginLeft: 20 
+  },
+
+  TextButton: { 
+    fontSize: 17, 
+    color: colors.tituloBranco, 
+    textAlign: 'center', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    fontWeight: 'bold'
+  },
 });
 
 const stylesVaga = StyleSheet.create({
   item: {
     backgroundColor: colors.cinza,
-    padding: 15, borderRadius: 15, marginVertical: 8,
-    width: width * 0.9, alignSelf: 'center', alignItems: 'center',
+    padding: 15, 
+    borderRadius: 15, 
+    marginVertical: 8,
+    width: width * 0.9, 
+    alignSelf: 'center', 
+    alignItems: 'center',
   },
-  title: { fontSize: 35, fontWeight: 'bold', color: colors.tituloBranco },
-  subTitle: { fontSize: 21, color: colors.tituloAmarelo, marginBottom: 10 },
+
+  title: { 
+    fontSize: 35, 
+    fontWeight: 'bold', 
+    color: colors.tituloBranco 
+  },
+
+  subTitle: { 
+    fontSize: 21, 
+    color: colors.tituloAmarelo, 
+    marginBottom: 10 
+  },
+
   box_mode: {
-    flexDirection: 'row', justifyContent: 'space-between',
-    width: '100%', marginBottom: 2
+    flexDirection: 'row', 
+    justifyContent: 'space-between',
+    width: '100%', 
+    marginBottom: 2,
   },
-  mode: { fontSize: 17, color: colors.tituloBranco, paddingInline: 10, },
+
+  mode: { 
+    fontSize: 17, 
+    color: colors.tituloBranco, 
+    paddingInline: 10, 
+  },
+
   buttonCandidatar: {
     backgroundColor: colors.amarelo2,
-    padding: 10, borderRadius: 10, marginTop: 20,
+    padding: 10, 
+    borderRadius: 10, 
+    marginTop: 20,
     alignItems: 'center'
   },
-  buttonText: { fontSize: 16, color: colors.tituloBranco },
+
+  buttonText: { 
+    fontSize: 16, 
+    color: colors.tituloBranco 
+  },
 });
