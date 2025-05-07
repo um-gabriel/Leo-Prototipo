@@ -1,7 +1,7 @@
 import { StatusBar, StatusBarProps, TouchableOpacity, TouchableOpacityProps } from "react-native"
 import { colors } from "./global"
 import { TextInput, TextInputProps } from "react-native"
-import { width } from "../firebase/functions/interfaces"
+// import { width } from "../firebase/functions/interfaces"
 
 export function Botão({ ...rest }: TouchableOpacityProps) {
   return (
