@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { colors } from '@/src/components/global';
-import { handleAddVagaCLT } from '../firebase/functions/create/createCandidatura';
-import { verification } from '../firebase/functions/interface';
 
 type Item = {
+  id: string;
   nome_vaga: string;
   nome_empresa: string;
   salario: number;
@@ -14,6 +13,7 @@ type Item = {
   localizacao: string;
   setor: string;
   regime: string;
+  uid_criadorVaga: string; // Supondo que também use isso em outros lugares
 };
 
 type MyModalProps = {

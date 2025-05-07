@@ -14,9 +14,20 @@ export default function Layout() {
           width: '95%', height: 70, 
           margin: 10, marginBottom: 20,  paddingHorizontal: 20,
           justifyContent: "center",
+          alignItems: 'center',
           borderRadius: 15,
           backgroundColor: colors.fundo2, // cor de fundo da tab
+          elevation: 0,           // Android sombra
+          borderTopWidth: 0,      // iOS linha superior
         },
+        tabBarItemStyle: {
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+        tabBarIconStyle: {
+          justifyContent: 'center',
+          alignItems: 'center',
+        }
 
         // tabBarShowLabel: false, // opcional: para esconder os labels das tabs
       }}
@@ -30,7 +41,7 @@ export default function Layout() {
             fontWeight: 'bold', // opcional: para deixar o texto em negrito
           },
           tabBarIcon: ({ size, color, focused }) => {
-              return <MaterialCommunityIcons name='home' color={color} size={33} top={10}/>
+              return <MaterialCommunityIcons name='home' color={focused ? colors.amarelo1 : 'gray'} size={30} top={10}/>
           },
         }}
         />
@@ -43,7 +54,7 @@ export default function Layout() {
             fontWeight: 'bold', // opcional: para deixar o texto em negrito
           },
           tabBarIcon: ({ size, color, focused }) => {
-              return <MaterialCommunityIcons name='book' color={color} size={33} top={10} />
+              return <MaterialCommunityIcons name='book' color={focused ? colors.amarelo1 : 'gray'} size={30}  top={10}/>
           },
         }}
         />
@@ -56,7 +67,7 @@ export default function Layout() {
             fontWeight: 'bold', // opcional: para deixar o texto em negrito
           },
           tabBarIcon: ({ size, color, focused }) => {
-              return <MaterialCommunityIcons name='account' color={color} size={33} top={10} />
+              return <MaterialCommunityIcons name='account' color={focused ? colors.amarelo1 : 'gray'} size={30} top={10} />
           },
         }}
         />

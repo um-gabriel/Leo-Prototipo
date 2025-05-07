@@ -26,6 +26,9 @@ type Item = {
   modalidade: string;
   email: string;
   localizacao: string;
+  uid_criadorVaga: string; // Supondo que também use isso em outros lugares
+  setor: string;
+  regime: string;
 };
 
 export default function Geral() {
@@ -86,7 +89,7 @@ export default function Geral() {
 
         <View style={stylesVagas.box_mode}>
           <Text style={stylesVagas.mode}>Contato:</Text>
-          <Text style={stylesVagas.mode}>{item.email}</Text>
+          <Text style={stylesVagas.mode} numberOfLines={1} ellipsizeMode="tail">{item.email}</Text>
         </View>
 
         <View style={stylesVagas.box_mode}>
@@ -95,7 +98,7 @@ export default function Geral() {
         </View>
 
         <Pressable style={stylesVagas.button} onPress={() => openModal(item)}>
-            <Text style={{color: colors.preto, fontSize: 17}} >Visualizar melhor</Text>
+            <Text style={{color: colors.tituloBranco, fontSize: 17, fontWeight: 'bold'}} >Visualizar melhor</Text>
         </Pressable>
 
       </View>
@@ -106,38 +109,33 @@ export default function Geral() {
   return (
     <View style={styles.container}>
       <StatusBarObject />
-
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-        <View style={styles.containerTop}>
-          <TextInput
-            style={styles.searchBar}
-            placeholder="Buscar vagas..."
-            placeholderTextColor="#aaa"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-          <Text style={styles.titleTop}>
-            {campo} {valor}
-          </Text>
-        </View>
-
-        <View style={styles.containerBottom}>
-          {loading ? (
-            <ActivityIndicator size="large" color={colors.amarelo1} />
-          ) : (
-            <FlatList
-              data={filteredJobs}
-              keyExtractor={(item) => item.id}
-              renderItem={renderItem}
-              nestedScrollEnabled
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 50 }}
-            />
-          )}
-        </View>
-      </ScrollView>
-
-      {/* Exemplo: Aqui você pode incluir seu modal, se tiver */}
+  
+      {loading ? (
+        <ActivityIndicator size="large" color={colors.amarelo1} />
+      ) : (
+        <FlatList
+          data={filteredJobs}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 50 }}
+          ListHeaderComponent={
+            <View style={styles.containerTop}>
+              <TextInput
+                style={styles.searchBar}
+                placeholder="Buscar vagas..."
+                placeholderTextColor="#aaa"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+              <Text style={styles.titleTop}>
+                {campo} {valor}
+              </Text>
+            </View>
+          }
+        />
+      )}
+  
       {modalVisible && selectedItem && (
         <MyModal
           visible={modalVisible}
@@ -199,15 +197,27 @@ const stylesVagas = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
   },
-  title: { fontSize: 35, fontWeight: 'bold', color: colors.tituloBranco },
-  subTitle: { fontSize: 21, color: colors.tituloAmarelo, marginBottom: 10 },
+  title: { 
+    fontSize: 35, 
+    fontWeight: 'bold', 
+    color: colors.tituloBranco 
+  },
+  subTitle: { 
+    fontSize: 21, 
+    color: colors.tituloAmarelo, 
+    marginBottom: 10 
+  },
   box_mode: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
     marginBottom: 2,
   },
-  mode: { fontSize: 17, color: colors.tituloBranco, paddingHorizontal: 10 },
+  mode: { 
+    fontSize: 16, 
+    color: colors.tituloBranco, 
+    paddingHorizontal: 10,
+  },
   buttonCandidatar: {
     backgroundColor: colors.amarelo2,
     padding: 10,
@@ -215,11 +225,13 @@ const stylesVagas = StyleSheet.create({
     marginTop: 20,
     alignItems: 'center',
   },
-  
-  buttonText: { fontSize: 16, color: colors.tituloBranco },
+  buttonText: { 
+    fontSize: 16, 
+    color: colors.tituloBranco 
+  },
   button: {
-    width: '80%',
-    height: 35,
+    width: '100%',
+    height: 50,
     backgroundColor: colors.amarelo2,
     justifyContent: "center", alignItems: "center",
     borderRadius: 10, flexDirection: "row",
