@@ -21,13 +21,63 @@ export default function Home() {
   }, []);
 
   // ... (restante do código JSX)
+  const boxSetores = (coleção: string, campo: string, valor: string) => {
+    router.push(`../Geral?coleção=${coleção}&campo=${campo}&valor=${valor}`);
+  };
+
+  const CriarVagas = (coleçãoUnica: string) => {
+    router.push(`../Geral?coleção=${coleçãoUnica}`);
+  };
+
+  useEffect(() => {
+    getVagas({ setJobs, setFilteredJobs: setJobs, setLoading });
+  }, []);
+
+  const TextInfo = ({ label, value }: { label: string; value: string }) => (
+    <View style={stylesVaga.box_mode}>
+      <Text style={stylesVaga.mode}>{label}</Text>
+      <Text style={stylesVaga.mode}>{value}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
       {/* ... (StatusBarObject, AreaTop) ... */}
+      <StatusBarObject />
 
       <ScrollView>
         {/* ... (Áreas de vagas) ... */}
+        <View style={styles.AreaTop}>
+          <Text style={styles.AreaTop_Title}>Go 2 Work</Text>
+          <Text style={styles.AreaTop_subTitle}>
+            Encontre uma experiência que pode mudar sua vida bem aqui.
+          </Text>
+        </View>
+
+        <View style={styles.content}>
+        <Text style={styles.SubTitle}>Áreas de vagas</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          
+          <TouchableOpacity style={styles.BoxContainerEmpresas} onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Saude')} >
+            <View style={styles.boxImage}> <MaterialIcons name="health-and-safety" size={27} color={colors.amarelo2} /> </View>
+            <Text style={styles.BoxContainerEmpresas_text}>Saúde</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.BoxContainerEmpresas} onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Magia e produção')} >
+            <View style={styles.boxImage}> <MaterialIcons name="computer" size={27} color={colors.amarelo2} /> </View>
+            <Text style={styles.BoxContainerEmpresas_text}>TI</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.BoxContainerEmpresas} onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Engenharia')} >
+            <View style={styles.boxImage}> <FontAwesome6 name="house-chimney" size={22} color={colors.amarelo2} /> </View>
+            <Text style={styles.BoxContainerEmpresas_text}>Engenharia</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.BoxContainerEmpresas} onPress={() => boxSetores('Vagas-trabalho', 'setor', 'Educacao')} >
+            <View style={styles.boxImage}>
+              <Feather name="book" size={24} color={colors.amarelo2} />
+            </View>
+            <Text style={styles.BoxContainerEmpresas_text}>Educação</Text>
+          </TouchableOpacity>
+
+        </ScrollView>
 
         <View style={styles.AreaVagas}>
           <Text style={styles.SubTitle}>Vagas relacionadas a tecnologia</Text>
@@ -39,7 +89,10 @@ export default function Home() {
               <View key={item.id} style={stylesVaga.item}>
                 <Text style={stylesVaga.title}>{item.nome_vaga}</Text>
                 <Text style={stylesVaga.subTitle}>{item.nome_empresa}</Text>
-                {/* ... (outras informações da vaga) ... */}
+                <TextInfo label="Salário: R$" value={item.salario} />
+                <TextInfo label="Modalidades:" value={item.modalidade} />
+                <TextInfo label="Contato:" value={item.email} />
+                <TextInfo label="Localização:" value={item.localizacao} />
 
                 <TouchableOpacity
                   style={stylesVaga.buttonCandidatar}
@@ -81,6 +134,10 @@ export default function Home() {
             ))
           )}
           {/* ... (BotãoInicio) ... */}
+          <BotãoInicio onPress={() => CriarVagas('Vagas-trabalho')}>
+            <Text style={styles.TextButton}>Clique aqui para ver mais</Text>
+          </BotãoInicio>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -113,7 +170,7 @@ export default function Home() {
   );
 
   return (
-    <View style={styles.container}>'  '
+    <View style={styles.container}>
       <StatusBarObject />
       
       <ScrollView>

@@ -6,7 +6,15 @@ import { Ionicons } from '@expo/vector-icons'; // Importando ícones do Expo
 export default function Layout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer>
+      <Drawer
+        screenOptions={{
+          drawerStyle: {
+            backgroundColor: colors.fundo
+          },
+          drawerActiveTintColor: colors.amarelo1,  // opcional
+          drawerInactiveTintColor: colors.textoCinza,         // opcional
+        }}
+      >
         <Drawer.Screen 
           name="Home"
           options={{
@@ -23,6 +31,7 @@ export default function Layout() {
             ),
           }}
         />
+
         <Drawer.Screen 
           name="Avisos"
           options={{
@@ -39,6 +48,7 @@ export default function Layout() {
             ),
           }}
         />
+
         <Drawer.Screen 
           name="Geral"
           options={{
@@ -55,6 +65,7 @@ export default function Layout() {
             ),
           }}
         />
+
         <Drawer.Screen 
           name="CreateJob"
           options={{
@@ -71,6 +82,7 @@ export default function Layout() {
             ),
           }}  
         />
+
         <Drawer.Screen 
           name="CreateFreelancerJob"
           options={{
@@ -87,6 +99,7 @@ export default function Layout() {
             ),
           }}  
         />
+
         <Drawer.Screen 
           name="Config"
           options={{
@@ -103,6 +116,7 @@ export default function Layout() {
             ),
           }}
         />
+        
       </Drawer>
     </GestureHandlerRootView>
   );
