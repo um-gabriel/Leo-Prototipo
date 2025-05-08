@@ -1,9 +1,3 @@
-// CRIAR CANDIDATURAS
-
-// src/firebase/functions/create/createCandidatura.ts
-
-// src/firebase/functions/create/createCandidatura.ts
-
 // src/firebase/functions/create/createCandidatura.ts
 
 import { db, auth } from '../../config'; // Ajuste o caminho conforme a sua estrutura

@@ -1,3 +1,5 @@
+// interface.tsx
+
 import { Dimensions } from "react-native";
 import { auth, db } from "../config";
 import { doc, getDoc } from "firebase/firestore";

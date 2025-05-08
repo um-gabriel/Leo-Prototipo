@@ -1,3 +1,5 @@
+// src/firebase/functions/get/getJobs.tsx
+
 import { collection, getDocs, limit, query, where } from "firebase/firestore";
 import { db } from "./../../config";
 
