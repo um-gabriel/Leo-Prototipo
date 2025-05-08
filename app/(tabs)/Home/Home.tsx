@@ -1,3 +1,5 @@
+// Home.tsx
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Feather, FontAwesome6, MaterialIcons } from '@expo/vector-icons';

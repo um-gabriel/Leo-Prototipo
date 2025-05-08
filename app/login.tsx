@@ -1,3 +1,5 @@
+// login.tsx
+
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Link, useRouter } from 'expo-router';

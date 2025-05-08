@@ -1,4 +1,236 @@
-// src/screens/CompanyApplicationsScreen.tsx
+// Avisos.tsx
+
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db, auth } from '@/src/firebase/config';
+import { colors } from '@/src/components/global';
+import { CandidaturaVaga, verification } from '@/src/firebase/functions/interface';
+import { StatusBarObject } from '@/src/components/objects';
+import { useRouter } from 'expo-router';
+
+export default function Avisos() {
+    const [candidaturas, setCandidaturas] = useState<CandidaturaVaga[]>([]);
+    const router = useRouter();
+
+    useEffect(() => {
+        const userId = verification().uid;
+        console.log("ID da empresa logada em Avisos:", userId); // LOG DO ID DA EMPRESA
+
+        if (userId) {
+            const candidaturasRef = collection(db, 'candidaturas');
+            const q = query(candidaturasRef, where('uidCriadorVaga', '==', userId));
+
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const candidaturasData: CandidaturaVaga[] = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    candidaturasData.push({
+                        id_candidatura: doc.id,
+                        uid_candidato: data.userId,
+                        uid_criadorVaga: data.uidCriadorVaga,
+                        nome_vaga: data.nome_vaga,
+                        status: data.status || 'Pendente',
+                        nome_candidato: data.nome_candidato,
+                        dataCandidatura: data.createdAt ? data.createdAt.toDate() : new Date(),
+                    });
+                });
+                setCandidaturas(candidaturasData);
+                console.log("Candidaturas encontradas:", candidaturasData); // LOG DAS CANDIDATURAS ENCONTRADAS
+            });
+
+            return () => unsubscribe();
+        }
+    }, []);
+
+    const verDetalhesCandidatura = (candidatura: CandidaturaVaga) => {
+        router.push({
+            pathname: '/detalhesCandidatura',
+            params: {
+                idCandidatura: candidatura.id_candidatura,
+                uidCandidato: candidatura.uid_candidato,
+                uidCriadorVaga: candidatura.uid_criadorVaga,
+                nomeVaga: candidatura.nome_vaga,
+                status: candidatura.status,
+                nomeCandidato: candidatura.nome_candidato,
+                dataCandidatura: candidatura.dataCandidatura.toISOString(),
+            },
+        });
+    };
+
+    const renderCandidatura = ({ item }: { item: CandidaturaVaga }) => (
+        <TouchableOpacity style={styles.candidaturaItem} onPress={() => verDetalhesCandidatura(item)}>
+            <Text style={styles.titulo}>{item.nome_vaga}</Text>
+            <Text style={styles.info}>
+                <Text style={{ color: colors.amarelo2 }}>Status:</Text> {item.status}
+            </Text>
+            <Text style={styles.info}>
+                <Text style={{ color: colors.amarelo2 }}>Candidato:</Text> {item.nome_candidato}
+            </Text>
+            <Text style={styles.info}>
+                <Text style={{ color: colors.amarelo2 }}>Data:</Text> {new Date(item.dataCandidatura).toLocaleDateString('pt-BR')}
+            </Text>
+        </TouchableOpacity>
+    );
+
+    return (
+        <View style={styles.container}>
+            <StatusBarObject />
+            <Text style={styles.header}>Candidaturas Recebidas</Text>
+            {candidaturas.length === 0 ? (
+                <Text style={[styles.info, { textAlign: 'center', marginTop: 20 }]}>
+                    Nenhuma candidatura recebida
+                </Text>
+            ) : (
+                <FlatList
+                    data={candidaturas}
+                    renderItem={renderCandidatura}
+                    keyExtractor={(item) => item.id_candidatura}
+                />
+            )}
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: colors.fundo,
+    },
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: colors.tituloBranco,
+        marginBottom: 16,
+    },
+    candidaturaItem: {
+        backgroundColor: colors.cinza,
+        padding: 16,
+        marginBottom: 12,
+        borderRadius: 8,
+    },
+    titulo: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 5,
+        color: colors.tituloBranco
+    },
+    info: {
+        fontSize: 16,
+        color: colors.tituloBranco,
+        marginBottom: 4,
+    },
+});
+
+/*import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db, auth } from '@/src/firebase/config';
+import { colors } from '@/src/components/global';
+import { CandidaturaVaga, verification } from '@/src/firebase/functions/interface';
+import { StatusBarObject } from '@/src/components/objects';
+
+export default function Avisos() {
+  const [candidaturas, setCandidaturas] = useState<CandidaturaVaga[]>([]);
+
+  useEffect(() => {
+    const userId = verification().uid;
+
+    if (userId) {
+      const candidaturasRef = collection(db, 'candidaturas');
+      const q = query(candidaturasRef, where('uidCriadorVaga', '==', userId));
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const candidaturasData: CandidaturaVaga[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          console.log('Candidatura recebida:', data); // Log para verificar os dados recebidos
+          candidaturasData.push({
+            id_candidatura: doc.id,
+            uid_candidato: data.userId,
+            uid_criadorVaga: data.uidCriadorVaga,
+            nome_vaga: data.nome_vaga,
+            status: data.status || 'Pendente',
+            nome_candidato: data.nome_candidato,
+            dataCandidatura: data.createdAt ? data.createdAt.toDate() : new Date(),
+          });
+        }); 
+        console.log('Candidaturas processadas:', candidaturasData); // Log para verificar as candidaturas processadas
+        setCandidaturas(candidaturasData);
+      });
+
+      // Limpeza do listener quando o componente é desmontado
+      return () => unsubscribe();
+    }
+  }, []);
+
+  const renderCandidatura = ({ item }: { item: CandidaturaVaga }) => (
+    <View style={styles.candidaturaItem}>
+      <Text style={styles.titulo}>{item.nome_vaga}</Text>
+      <Text style={styles.info}>
+        <Text style={{ color: colors.amarelo2 }}>Status:</Text> {item.status}
+      </Text>
+      <Text style={styles.info}>
+        <Text style={{ color: colors.amarelo2 }}>Candidato:</Text> {item.nome_candidato}
+      </Text>
+      <Text style={styles.info}>
+        <Text style={{ color: colors.amarelo2 }}>Data:</Text> {new Date(item.dataCandidatura).toLocaleDateString('pt-BR')}
+      </Text>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <StatusBarObject />
+
+      <Text style={styles.header}>Candidaturas Recebidas</Text>
+      {candidaturas.length === 0 ? (
+        <Text style={[styles.info, { textAlign: 'center', marginTop: 20 }]}>
+          Nenhuma candidatura recebida
+        </Text>
+      ) : (
+        <FlatList
+          data={candidaturas}
+          renderItem={renderCandidatura}
+          keyExtractor={(item) => item.id_candidatura}
+        />
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: colors.fundo,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.tituloBranco,
+    marginBottom: 16,
+  },
+  candidaturaItem: {
+    backgroundColor: colors.cinza,
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+  },
+  titulo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: colors.tituloBranco
+  },
+  info: {
+    fontSize: 16,
+    color: colors.tituloBranco,
+    marginBottom: 4,
+  },
+});
+*/
 
 // import React, { useEffect, useState } from 'react';
 // import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
@@ -188,111 +420,3 @@
 //     fontStyle: 'italic',
 //   },
 // });
-
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { db, auth } from '@/src/firebase/config';
-import { colors } from '@/src/components/global';
-import { CandidaturaVaga, verification } from '@/src/firebase/functions/interface';
-import { StatusBarObject } from '@/src/components/objects';
-
-export default function Avisos() {
-  const [candidaturas, setCandidaturas] = useState<CandidaturaVaga[]>([]);
-
-  useEffect(() => {
-    const userId = verification().uid;
-
-    if (userId) {
-      const candidaturasRef = collection(db, 'candidaturas');
-      const q = query(candidaturasRef, where('uidCriadorVaga', '==', userId));
-
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const candidaturasData: CandidaturaVaga[] = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          console.log('Candidatura recebida:', data); // Log para verificar os dados recebidos
-          candidaturasData.push({
-            id_candidatura: doc.id,
-            uid_candidato: data.userId,
-            uid_criadorVaga: data.uidCriadorVaga,
-            nome_vaga: data.nome_vaga,
-            status: data.status || 'Pendente',
-            nome_candidato: data.nome_candidato,
-            dataCandidatura: data.createdAt ? data.createdAt.toDate() : new Date(),
-          });
-        }); 
-        console.log('Candidaturas processadas:', candidaturasData); // Log para verificar as candidaturas processadas
-        setCandidaturas(candidaturasData);
-      });
-
-      // Limpeza do listener quando o componente é desmontado
-      return () => unsubscribe();
-    }
-  }, []);
-
-  const renderCandidatura = ({ item }: { item: CandidaturaVaga }) => (
-    <View style={styles.candidaturaItem}>
-      <Text style={styles.titulo}>{item.nome_vaga}</Text>
-      <Text style={styles.info}>
-        <Text style={{ color: colors.amarelo2 }}>Status:</Text> {item.status}
-      </Text>
-      <Text style={styles.info}>
-        <Text style={{ color: colors.amarelo2 }}>Candidato:</Text> {item.nome_candidato}
-      </Text>
-      <Text style={styles.info}>
-        <Text style={{ color: colors.amarelo2 }}>Data:</Text> {new Date(item.dataCandidatura).toLocaleDateString('pt-BR')}
-      </Text>
-    </View>
-  );
-
-  return (
-    <View style={styles.container}>
-      <StatusBarObject />
-
-      <Text style={styles.header}>Candidaturas Recebidas</Text>
-      {candidaturas.length === 0 ? (
-        <Text style={[styles.info, { textAlign: 'center', marginTop: 20 }]}>
-          Nenhuma candidatura recebida
-        </Text>
-      ) : (
-        <FlatList
-          data={candidaturas}
-          renderItem={renderCandidatura}
-          keyExtractor={(item) => item.id_candidatura}
-        />
-      )}
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: colors.fundo,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.tituloBranco,
-    marginBottom: 16,
-  },
-  candidaturaItem: {
-    backgroundColor: colors.cinza,
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-  },
-  titulo: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: colors.tituloBranco
-  },
-  info: {
-    fontSize: 16,
-    color: colors.tituloBranco,
-    marginBottom: 4,
-  },
-});
