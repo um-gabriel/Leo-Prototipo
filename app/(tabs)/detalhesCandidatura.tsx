@@ -1,36 +1,28 @@
 // detalhesCandidatura.tsx
 
-// detalhesCandidatura.tsx
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { useNavigation, useRoute, RouteProp, ParamListBase } from '@react-navigation/native'; // Importe RouteProp e ParamListBase
+import { useNavigation, useRoute, RouteProp, ParamListBase } from '@react-navigation/native';
 import { db } from '@/src/firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 import { colors } from '@/src/components/global';
 import { StatusBarObject } from '@/src/components/objects';
 
-interface RouteParams extends ParamListBase {
-    params?: DetalhesCandidaturaParams;
-}
 
-interface DetalhesCandidaturaParams {
-    idCandidatura?: string;
-    uidCandidato?: string;
-    uidCriadorVaga?: string;
-    nomeVaga?: string;
-    status?: string;
-    nomeCandidato?: string;
-    dataCandidatura?: string;
+interface RouteParams extends ParamListBase {
+    params?: {
+        idCandidatura?: string;
+    };
 }
 
 interface CandidaturaDetalhada {
     id_candidatura: string;
-    uid_candidato: string;
-    uid_criadorVaga: string;
-    nome_vaga: string;
-    status: string;
-    // Adicione aqui outros campos da candidatura
+    userId: string;
+    uidCriadorVaga: string;
+    jobId: string;
+    status?: string;
+    appliedAt?: Date | null;
+    // Adicione outros campos da coleção 'applications'
 }
 
 interface CandidatoDetalhado {
@@ -60,7 +52,7 @@ interface VagaDetalhada {
 export default function DetalhesCandidatura() {
     const navigation = useNavigation();
     const route = useRoute<RouteProp<RouteParams, 'params'>>();
-    const { idCandidatura, uidCandidato, uidCriadorVaga, nomeVaga, status, nomeCandidato, dataCandidatura } = route.params || {};
+    const { idCandidatura } = route.params || {};
     const [candidatura, setCandidatura] = useState<CandidaturaDetalhada | null>(null);
     const [candidato, setCandidato] = useState<CandidatoDetalhado | null>(null);
     const [empresa, setEmpresa] = useState<EmpresaDetalhada | null>(null);
@@ -69,42 +61,106 @@ export default function DetalhesCandidatura() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+    const fetchDetalhes = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            if (idCandidatura) {
+                const candidaturaDocRef = doc(db, 'applications', idCandidatura);
+                const candidaturaDoc = await getDoc(candidaturaDocRef);
+
+                if (candidaturaDoc.exists()) {
+                    const candidaturaData = { id_candidatura: candidaturaDoc.id, ...candidaturaDoc.data() } as CandidaturaDetalhada;
+                    setCandidatura(candidaturaData);
+                    console.log('Dados da Candidatura:', candidaturaData);
+
+                    const candidatoDocRef = doc(db, 'Contas', candidaturaData.userId);
+                    const candidatoDoc = await getDoc(candidatoDocRef);
+                    if (candidatoDoc.exists()) {
+                        const candidatoData = candidatoDoc.data() as CandidatoDetalhado;
+                        setCandidato(candidatoData);
+                        console.log('Dados do Candidato:', candidatoData);
+                    } else {
+                        console.warn('Dados do candidato não encontrados:', candidaturaData.userId);
+                        setCandidato({});
+                    }
+
+                    const empresaDocRef = doc(db, 'Contas', candidaturaData.uidCriadorVaga);
+                    const empresaDoc = await getDoc(empresaDocRef);
+                    if (empresaDoc.exists()) {
+                        const empresaData = empresaDoc.data() as EmpresaDetalhada;
+                        setEmpresa(empresaData);
+                        console.log('Dados da Empresa:', empresaData);
+                    } else {
+                        console.warn('Dados da empresa não encontrados:', candidaturaData.uidCriadorVaga);
+                        setEmpresa({});
+                    }
+
+                    const vagaDocRef = doc(db, 'Vagas-trabalho', candidaturaData.jobId);
+                    const vagaDoc = await getDoc(vagaDocRef);
+                    if (vagaDoc.exists()) {
+                        const vagaData = vagaDoc.data() as VagaDetalhada;
+                        setVaga(vagaData);
+                        console.log('Dados da Vaga:', vagaData);
+                    } else {
+                        console.warn('Vaga não encontrada:', candidaturaData.jobId);
+                        setVaga({});
+                    }
+                } else {
+                    setError('Candidatura não encontrada.');
+                }
+            }
+        } catch (e: any) {
+            setError('Erro ao carregar detalhes: ' + e.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchDetalhes();
+}, [idCandidatura]);
+
+    /*useEffect(() => {
         const fetchDetalhes = async () => {
             setLoading(true);
             setError(null);
             try {
                 if (idCandidatura) {
-                    const candidaturaDoc = await getDoc(doc(db, 'applications', idCandidatura));
+                    const candidaturaDocRef = doc(db, 'applications', idCandidatura);
+                    const candidaturaDoc = await getDoc(candidaturaDocRef);
+
                     if (candidaturaDoc.exists()) {
-                        setCandidatura({ id_candidatura: candidaturaDoc.id, ...candidaturaDoc.data() } as CandidaturaDetalhada);
-                        if (candidaturaDoc.data()?.jobId) {
-                            const vagaDoc = await getDoc(doc(db, 'Vagas-trabalho', candidaturaDoc.data().jobId));
-                            if (vagaDoc.exists()) {
-                                setVaga(vagaDoc.data() as VagaDetalhada);
-                            } else {
-                                console.warn('Vaga não encontrada:', candidaturaDoc.data().jobId);
-                            }
+                        const candidaturaData = { id_candidatura: candidaturaDoc.id, ...candidaturaDoc.data() } as CandidaturaDetalhada;
+                        setCandidatura(candidaturaData);
+
+                        // Buscar dados do candidato
+                        const candidatoDocRef = doc(db, 'Contas', candidaturaData.userId);
+                        const candidatoDoc = await getDoc(candidatoDocRef);
+                        if (candidatoDoc.exists()) {
+                            setCandidato(candidatoDoc.data() as CandidatoDetalhado);
+                        } else {
+                            console.warn('Dados do candidato não encontrados:', candidaturaData.userId);
+                        }
+
+                        // Buscar dados da empresa
+                        const empresaDocRef = doc(db, 'Contas', candidaturaData.uidCriadorVaga);
+                        const empresaDoc = await getDoc(empresaDocRef);
+                        if (empresaDoc.exists()) {
+                            setEmpresa(empresaDoc.data() as EmpresaDetalhada);
+                        } else {
+                            console.warn('Dados da empresa não encontrados:', candidaturaData.uidCriadorVaga);
+                        }
+
+                        // Buscar dados da vaga
+                        const vagaDocRef = doc(db, 'Vagas-trabalho', candidaturaData.jobId);
+                        const vagaDoc = await getDoc(vagaDocRef);
+                        if (vagaDoc.exists()) {
+                            setVaga(vagaDoc.data() as VagaDetalhada);
+                        } else {
+                            console.warn('Vaga não encontrada:', candidaturaData.jobId);
                         }
                     } else {
                         setError('Candidatura não encontrada.');
-                    }
-                }
-
-                if (uidCandidato) {
-                    const candidatoDoc = await getDoc(doc(db, 'Contas', uidCandidato));
-                    if (candidatoDoc.exists()) {
-                        setCandidato(candidatoDoc.data() as CandidatoDetalhado);
-                    } else {
-                        setError('Informações do candidato não encontradas.');
-                    }
-                }
-
-                if (uidCriadorVaga) {
-                    const empresaDoc = await getDoc(doc(db, 'Contas', uidCriadorVaga));
-                    if (empresaDoc.exists()) {
-                        setEmpresa(empresaDoc.data() as EmpresaDetalhada);
-                    } else {
-                        setError('Informações da empresa não encontradas.');
                     }
                 }
             } catch (e: any) {
@@ -115,7 +171,7 @@ export default function DetalhesCandidatura() {
         };
 
         fetchDetalhes();
-    }, [idCandidatura, uidCandidato, uidCriadorVaga]);
+    }, [idCandidatura]);*/
 
     if (loading) {
         return (
@@ -136,7 +192,7 @@ export default function DetalhesCandidatura() {
         );
     }
 
-    if (!candidatura || !candidato || !empresa) {
+    if (!candidatura || !candidato || !empresa || !vaga) {
         return (
             <View style={styles.container}>
                 <StatusBarObject />
@@ -152,7 +208,7 @@ export default function DetalhesCandidatura() {
 
             <View style={styles.detailItem}>
                 <Text style={styles.label}>Vaga:</Text>
-                <Text style={styles.value}>{vaga?.nome_vaga || nomeVaga}</Text>
+                <Text style={styles.value}>{vaga.nome_vaga}</Text>
             </View>
 
             <View style={styles.detailItem}>
@@ -165,7 +221,7 @@ export default function DetalhesCandidatura() {
 
             <View style={styles.detailItem}>
                 <Text style={styles.label}>Candidato:</Text>
-                <Text style={styles.value}>{candidato.nome_conta || nomeCandidato || 'Nome não disponível'}</Text>
+                <Text style={styles.value}>{candidato.nome_conta || 'Nome não disponível'}</Text>
                 {candidato.email && <Text style={styles.subValue}>Email: {candidato.email}</Text>}
                 {candidato.telefone && <Text style={styles.subValue}>Telefone: {candidato.telefone}</Text>}
                 {candidato.desc_sobre && <Text style={styles.subValue}>Sobre: {candidato.desc_sobre}</Text>}
@@ -173,12 +229,12 @@ export default function DetalhesCandidatura() {
 
             <View style={styles.detailItem}>
                 <Text style={styles.label}>Status da Candidatura:</Text>
-                <Text style={styles.value}>{status}</Text>
+                <Text style={styles.value}>{candidatura.status}</Text>
             </View>
 
             <View style={styles.detailItem}>
                 <Text style={styles.label}>Data da Candidatura:</Text>
-                <Text style={styles.value}>{dataCandidatura ? new Date(dataCandidatura).toLocaleDateString('pt-BR') : 'Data não disponível'}</Text>
+                <Text style={styles.value}>{candidatura.appliedAt ? new Date(candidatura.appliedAt).toLocaleDateString('pt-BR') : 'Data não disponível'}</Text>
             </View>
 
             {vaga?.descricao && (
