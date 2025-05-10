@@ -23,6 +23,49 @@ export const FormPessoa = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   async function createUser() {
+    try {
+      setIsLoading(true)
+        if (name == "" || email == "" || password == "" || descricao == "" || endereco == "" || links == "") {
+          Alert.alert("Preencha todos os campos")
+        }
+        else {
+            createUserWithEmailAndPassword(auth, email, password)
+                .then(value => {
+                    console.log("Cadastrado com sucesso! \n" + value.user.uid);
+
+                    try {
+                      const userUid = value.user.uid; // Obtenha o uid do usuário
+                      const dadosConta = {
+                            uid: userUid, // Use o uid como parte dos dados (opcional, mas útil)
+                            email: email,
+                            name_conta: name,
+                            senha: password,
+                            telefone: telefone,
+                            endereco: endereco,
+                            desc_sobre: descricao,
+                            links_externos: links,
+                            tipo_conta: 'Pessoa',
+                            createdAt: new Date(),
+                      };
+                      const userDocRef = doc(db, 'Contas', userUid); // Crie uma referência ao documento com o uid
+                      setDoc(userDocRef, dadosConta); // Use setDoc para definir o documento com o ID especificado
+                      Alert.alert('Concluído!', 'Conta criada');
+                      router.replace('/(tabs)/Home/Home');
+                    } catch (error) { // Capture o erro corretamente
+                      console.error("Erro ao configurar no firestore!", error)
+                      Alert.alert("Erro ao cadastrar!", "Verifique as informações")
+                    }
+              })
+                .catch((error) => console.log(error.message));
+          }
+    } catch (error) {
+      console.log("A função criar conta pesso n foi concluida", error.message)
+    } finally {
+      setIsLoading(false)
+    }
+};
+
+/* async function createUser() {
     try {
       setIsLoading(true)
         if (name == "" || email == "" || password == "" || descricao == "" || endereco == "" || links == "") {
@@ -62,6 +105,7 @@ export const FormPessoa = () => {
       setIsLoading(false)
     }
 };
+*/
 
 if (isLoading) {
   return (
