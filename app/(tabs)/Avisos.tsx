@@ -119,54 +119,6 @@ export default function Avisos() {
     }
 }, [isEmpresa]);
 
-    // useEffect(() => {
-    //     if (isEmpresa) {
-    //         const fetchCandidaturasEmpresa = async () => {
-    //             const empresaUid = auth.currentUser?.uid;
-    //             if (empresaUid) {
-    //                 const vagasCollection = collection(db, 'Vagas-trabalhos');
-    //                 const qVagasEmpresa = query(vagasCollection, where('uid_criadorVaga', '==', empresaUid));
-    //                 const snapshotVagasEmpresa = await getDocs(qVagasEmpresa);
-    //                 const idsVagasEmpresa = snapshotVagasEmpresa.docs.map(doc => doc.id);
-    //                 setVagasDaEmpresa(snapshotVagasEmpresa.docs.map(doc => ({ id: doc.id, ...doc.data() } as Vaga)));
-
-    //                 if (idsVagasEmpresa.length > 0) {
-    //                     const applicationsCollection = collection(db, 'applications');
-    //                     const qCandidaturas = query(applicationsCollection, where('jobId', 'in', idsVagasEmpresa));
-    //                     const unsubscribeCandidaturas = onSnapshot(qCandidaturas, async (snapshotCandidaturas) => {
-    //                         const candidaturasList: Candidatura[] = [];
-    //                         const candidatosIds = new Set<string>();
-    //                         snapshotCandidaturas.forEach((doc) => {
-    //                             const candidaturaData = { id: doc.id, ...doc.data() } as Candidatura;
-    //                             candidaturasList.push(candidaturaData);
-    //                             if (candidaturaData.userId) {
-    //                                 candidatosIds.add(candidaturaData.userId);
-    //                             }
-    //                         });
-    //                         setCandidaturas(candidaturasList);
-
-    //                         // Buscar informações dos candidatos
-    //                         const candidatosInfo: CandidatoInfo = {};
-    //                         for (const userId of candidatosIds) {
-    //                             console.log('Buscando info do candidato com ID:', userId); // ADICIONE ESTE LOG
-    //                             const candidatoDoc = await getDoc(doc(db, 'Contas', userId));
-    //                             if (candidatoDoc.exists()) {
-    //                                 candidatosInfo[userId] = candidatoDoc.data();
-    //                             }
-    //                         }
-    //                         setInfoCandidatos(candidatosInfo);
-    //                     });
-    //                     return () => unsubscribeCandidaturas();
-    //                 } else {
-    //                     setCandidaturas([]);
-    //                 }
-    //             }
-    //         };
-
-    //         fetchCandidaturasEmpresa();
-    //     }
-    // }, [isEmpresa]);
-
     const renderCandidatura = ({ item }: { item: Candidatura }) => {
         const nomeCandidato = infoCandidatos[item.userId || '']?.name_conta || 'Nome não disponível';
         const vagaRelacionada = vagasDaEmpresa.find(vaga => vaga.id === item.jobId)?.nome_vaga || 'Vaga não encontrada';
