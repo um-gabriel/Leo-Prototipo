@@ -5,19 +5,15 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '@/src/firebase/config';
 import { addDoc, collection } from 'firebase/firestore';
 import { width } from '@/src/firebase/functions/interface';
-import { Picker } from '@react-native-picker/picker';
 import { colors } from '@/src/components/global';
-import { FormPessoa } from '@/src/firebase/forms/formPessoa';
-import { FormEmpresa } from '@/src/firebase/forms/formEmpresa';
 import { StatusBarObject } from '@/src/components/objects';
 import { AntDesign } from '@expo/vector-icons';
-import { FormFreelancer } from '@/src/firebase/forms/formFreelancer';
+
+import { DropdownComponent } from '@/src/components/dropdawn';
 
 export default function CreateAccount() {
   const router = useRouter();
   const [tipoConta, setTipoConta] = useState('');
-
-  // Esses dados devem vir dos formulários filhos depois:
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -34,49 +30,34 @@ export default function CreateAccount() {
 
       Alert.alert('Concluído!', 'Conta criada com sucesso!');
       router.replace('/(tabs)/Home/Home');
-    } catch (error: any) {
-      console.error("Erro ao criar conta:", error.message);
-      Alert.alert('Erro', error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Erro ao criar conta:", error.message);
+        Alert.alert('Erro', error.message);
+      }
     }
   }
 
   function Back() {
-    router.replace('/')
+    router.push('/');
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.preto }}>
       <StatusBarObject />
-      
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={Style.cardTop}>
-          <AntDesign name="caretleft" size={30} color={colors.amarelo2} onPress={ () => Back()} style={{ right: 160, marginBottom: 10 }} />
+          <AntDesign name="caretleft" size={30} color={colors.amarelo2} onPress={Back} style={{ right: 160, marginBottom: 10 }} />
           <Text style={Style.Title}>Criar Conta</Text>
         </View>
 
-        <View style={Style.cardQuestionForm}>
-          <Text style={Style.cardQuestionForm_title}>Selecione o tipo de conta:</Text>
-          <Picker
-            selectedValue={tipoConta}
-            onValueChange={setTipoConta}
-            style={Style.picker}
-            dropdownIconColor={colors.tituloBranco}
-          >
-            <Picker.Item label="Selecione..." value="" />
-            <Picker.Item label="Pessoa" value="Pessoa" />
-            <Picker.Item label="Empresa" value="Empresa" />
-            <Picker.Item label="Freelancer" value="Freelancer" />
-          </Picker>
-        </View>
-
-        <View style={Style.formContainer}>
-          {tipoConta === 'Pessoa' && <FormPessoa setEmail={setEmail} setPassword={setPassword} onSubmit={createUser} />}
-          {tipoConta === 'Empresa' && <FormEmpresa setEmail={setEmail} setPassword={setPassword} onSubmit={createUser} />}
-          {tipoConta === 'Freelancer' && <FormFreelancer setEmail={setEmail} setPassword={setPassword} onSubmit={createUser} />}
-          {tipoConta === '' && (
-            <Text style={Style.selectText}>Por favor, selecione um tipo de conta acima</Text>
-          )}
-        </View>
+        <DropdownComponent
+          tipoConta={tipoConta}
+          setTipoConta={setTipoConta}
+          setEmail={setEmail}
+          setPassword={setPassword}
+          onSubmit={createUser}
+        />
       </ScrollView>
     </View>
   );
