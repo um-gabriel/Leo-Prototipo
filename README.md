@@ -12,9 +12,9 @@ git init
 git add .                                                          
 git commit -m ""                                                          
 git branch -M main                                                          
-git push -u origin main --force                                                                                                                                                                                                                                             
+git push -u origin main --force                                                                                                                                                                                                                                                         Baixar projeto APK: Estar na conta minha e usar "eas build --platform android --profile preview"                    
                                                                                                                              
                                                                                                                          
-Link: https://github.com/Thinking-Light-2025/Leo-Prototipo
+Link: https://github.com/Thinking-Light-2025/Leo-Prototipo                                                        
 
 
