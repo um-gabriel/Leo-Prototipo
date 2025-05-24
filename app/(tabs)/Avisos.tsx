@@ -191,6 +191,7 @@ export default function Avisos() {
                 <Text style={styles.tituloCandidatura}>Candidato: {nomeCandidato}</Text>
                 <Text style={styles.infoCandidatura}>Vaga: {vagaRelacionada}</Text>
                 <Text style={styles.infoCandidatura}>Status: {item.status || 'Pendente'}</Text>
+                {/* <Text style={styles.infoCandidatura}>Descricao: {item.appliedAt}</Text> */}
                 {/* Adicione aqui outros detalhes da candidatura que você quer exibir */}
             </TouchableOpacity>
         );
