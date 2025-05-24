@@ -1,14 +1,12 @@
 // detalhesCandidatura.tsx
 
-// detalhesCandidatura.tsx
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/src/firebase/config';
 import { colors } from '@/src/components/global';
-import { StatusBarObject } from '@/src/components/objects';
+import { StatusBarObject, Botão } from '@/src/components/objects';
 
 interface RouteParams {
     idCandidatura?: string;
@@ -20,6 +18,7 @@ interface RouteParams {
 }
 
 interface VagaDetalhada extends RouteParams {
+    appliedAt: React.JSX.Element;
     createdAt: Timestamp;
     nome_empresa?: string;
     regime?: string;
@@ -114,6 +113,14 @@ useEffect(() => {
                     {vaga.descricao && <Text style={styles.infoText}>Descrição: {vaga.descricao}</Text>}
                     {/* Adicione outras informações da vaga que você deseja exibir */}
                 </View>
+                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                        <Botão activeOpacity={0.8} style={{ flex: 1 }}>
+                            <Text style={{ fontSize: 18, color: colors.tituloBranco }}>Rejeitar</Text>
+                        </Botão>
+                        <Botão activeOpacity={0.8} style={{ flex: 1 }}>
+                            <Text style={{ fontSize: 18, color: colors.tituloBranco }}>Aceitar</Text>
+                        </Botão>
+                    </View>
             </ScrollView>
         </View>
     );
