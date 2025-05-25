@@ -178,13 +178,15 @@ export default function Avisos() {
                 router.push({
                     pathname: '/detalhesCandidatura',
                     params: {
-                        idCandidatura: item.id,
-                        uidCandidato: item.userId,
-                        jobId: item.jobId,
-                        nomeVaga: vagaRelacionada,
-                        status: item.status,
-                        nomeCandidato: nomeCandidato,
-                        // Outros parâmetros relevantes da candidatura
+                        idCandidatura: item.id, // ID do documento da candidatura
+                        uidCandidato: item.userId, // UID do candidato (da candidatura)
+                        jobId: item.jobId, // ID da vaga (da candidatura)
+                        nomeVaga: vagaRelacionada, // Passa o nome da vaga (já resolvido em Avisos)
+                        status: item.status, // Passa o status (já resolvido em Avisos)
+                        nomeCandidato: nomeCandidato, // Passa o nome do candidato (já resolvido em Avisos)
+                        // Não é estritamente necessário passar nomeVaga, status, nomeCandidato
+                        // pois eles serão buscados novamente aqui, mas pode servir como fallback
+                        // ou para exibição imediata antes da busca completa.
                     },
                 });
             }}>
