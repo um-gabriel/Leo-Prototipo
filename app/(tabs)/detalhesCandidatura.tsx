@@ -13,7 +13,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router'; // Para obter os parâmetros passados
 import { doc, getDoc, updateDoc } from 'firebase/firestore'; // Para buscar e atualizar documentos
 import { db } from '@/src/firebase/config'; // Seu arquivo de configuração do Firebase
-import { colors } from '@/src/components/global';  // Presumo que este arquivo exista
+import { colors } from '@/src/components/global'; // Presumo que este arquivo exista
 import { StatusBarObject } from '@/src/components/objects'; // Presumo que este arquivo exista
 
 // Interfaces para os dados
