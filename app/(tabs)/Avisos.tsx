@@ -166,7 +166,7 @@ export default function Avisos() {
         return (
             <TouchableOpacity style={styles.candidaturaItem} onPress={() => {
                 router.push({
-                    pathname: '/detalhesCandidatura',
+                    pathname: '/(tabs)/(stack)/detalhesCandidatura',
                     params: {
                         idCandidatura: item.id,
                         uidCandidato: item.userId,
