@@ -1,4 +1,292 @@
 // formPessoa.js
+
+// Imports React Native
+import { View, Text, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native'; // Adicionado ScrollView
+import React, { useState } from 'react';
+
+// Imports Expo
+import { Link, useRouter } from 'expo-router';
+
+// Componentes internos
+import { colors } from '@/src/components/global';
+import { Botão, TxtInput } from '@/src/components/objects';
+import { styles } from '@/src/firebase/forms/formEmpresa'
+
+// Imports firebase
+import { auth, db } from '@/src/firebase/config';
+import { width } from '@/src/firebase/functions/interface';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+
+export const FormPessoa = () => {
+  const router = useRouter();
+
+  // Estados para os campos do formulário
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [endereco, setEndereco] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [linkedin, setLinkedin] = useState('');
+  const [instagram, setInstagram] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  /**
+   * @function createUser
+   * @description Função assíncrona para criar um novo usuário no Firebase Authentication
+   * e salvar seus dados no Firestore.
+   */
+  async function createUser() {
+    // 1. Inicia o estado de carregamento
+    setIsLoading(true);
+
+    try {
+      // 2. Validação dos campos obrigatórios
+      if (!name || !email || !password || !descricao || !endereco) {
+        Alert.alert("Preencha todos os campos obrigatórios!");
+        return; // Retorna para não prosseguir com a criação do usuário
+      }
+
+      // 3. Criação do usuário no Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userUid = userCredential.user.uid;
+      console.log("Usuário cadastrado no Auth com sucesso! UID:", userUid);
+
+      // 4. Preparação dos dados para o Firestore
+      const dadosConta = {
+        uid: userUid,
+        email: email,
+        name_conta: name,
+        telefone: telefone, // Telefone é opcional, então não precisa de validação extra aqui
+        endereco: endereco,
+        desc_sobre: descricao,
+        instagram: instagram, // Instagram é opcional
+        linkedin: linkedin, // Linkedin é opcional
+        tipo_conta: 'Pessoa',
+        createdAt: new Date(),
+      };
+
+      // 5. Salvando os dados do usuário no Firestore
+      const userDocRef = doc(db, 'Contas', userUid);
+      await setDoc(userDocRef, dadosConta);
+      console.log("Dados da conta salvos no Firestore com sucesso para o UID:", userUid);
+
+      // 6. Sucesso no cadastro
+      Alert.alert('Concluído!', 'Sua conta foi criada com sucesso!');
+      router.replace('/(tabs)/Home/Home');
+
+    } catch (error) {
+      // 7. Tratamento de erros
+      console.error("Erro no processo de cadastro:", error);
+
+      let errorMessage = "Ocorreu um erro ao cadastrar. Verifique as informações.";
+
+      // Mensagens de erro específicas do Firebase
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'Este email já está em uso. Tente outro.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'O formato do email é inválido.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'A senha é muito fraca. Ela deve ter pelo menos 6 caracteres.';
+      }
+
+      Alert.alert("Erro ao cadastrar!", errorMessage);
+
+    } finally {
+      // 8. Finaliza o estado de carregamento, independentemente do sucesso ou falha
+      setIsLoading(false);
+    }
+  }
+
+  // Renderização do componente
+  return (
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.containerMed}>
+
+          {/* Campo Nome */}
+          <View style={styles.containerMed_AreaInput}>
+            <Text style={styles.containerMed_AreaInput_text}>Digite seu nome:</Text>
+            <TxtInput
+              value={name}
+              onChangeText={setName}
+              placeholder="Seu nome completo"
+              placeholderTextColor={colors.amarelo2}
+            />
+          </View>
+
+          {/* Campo Email */}
+          <View style={styles.containerMed_AreaInput}>
+            <Text style={styles.containerMed_AreaInput_text}>Digite seu email:</Text>
+            <TxtInput
+              value={email}
+              onChangeText={setEmail}
+              placeholder="seu.email@example.com"
+              placeholderTextColor={colors.amarelo2}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+
+          {/* Campo Senha */}
+          <View style={styles.containerMed_AreaInput}>
+            <Text style={styles.containerMed_AreaInput_text}>Crie sua senha:</Text>
+            <TxtInput
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Mínimo de 6 caracteres"
+              placeholderTextColor={colors.amarelo2}
+              secureTextEntry
+            />
+          </View>
+
+          {/* Campo Telefone */}
+          <View style={styles.containerMed_AreaInput}>
+            <Text style={styles.containerMed_AreaInput_text}>Telefone (Opcional):</Text>
+            <TxtInput
+              value={telefone}
+              onChangeText={setTelefone}
+              placeholder="(XX) XXXXX-XXXX"
+              placeholderTextColor={colors.amarelo2}
+              keyboardType="phone-pad"
+            />
+          </View>
+
+          {/* Campo Endereço */}
+          <View style={styles.containerMed_AreaInput}>
+            <Text style={styles.containerMed_AreaInput_text}>Digite seu endereço:</Text>
+            <TxtInput
+              value={endereco}
+              onChangeText={setEndereco}
+              placeholder="Rua, Número, Bairro, Cidade, Estado"
+              placeholderTextColor={colors.amarelo2}
+            />
+          </View>
+
+          {/* Campo Descrição */}
+          <View style={[styles.containerMed_AreaInput]}>
+            <Text style={styles.containerMed_AreaInput_text}>Uma breve descrição sobre você:</Text>
+            <TxtInput
+              value={descricao}
+              onChangeText={setDescricao}
+              placeholder="Fale um pouco sobre suas habilidades e experiências"
+              placeholderTextColor={colors.amarelo2}
+              multiline
+              numberOfLines={5}
+              style={{ height: 150, fontSize: 17}} // Ajuste para multiline
+            />
+          </View>
+
+          {/* Campo Instagram */}
+          <View style={styles.containerMed_AreaInput}>
+            <Text style={styles.containerMed_AreaInput_text}>Link do seu Instagram (Opcional):</Text>
+            <TxtInput
+              value={instagram}
+              onChangeText={setInstagram}
+              placeholder="ex: instagram.com/seuperfil"
+              placeholderTextColor={colors.amarelo2}
+              autoCapitalize="none"
+            />
+          </View>
+
+          {/* Campo Linkedin */}
+          <View style={styles.containerMed_AreaInput}>
+            <Text style={styles.containerMed_AreaInput_text}>Link do seu LinkedIn (Opcional):</Text>
+            <TxtInput
+              value={linkedin}
+              onChangeText={setLinkedin}
+              placeholder="ex: linkedin.com/in/seuperfil"
+              placeholderTextColor={colors.amarelo2}
+              autoCapitalize="none"
+            />
+          </View>
+
+          {/* Botão de Cadastro ou Indicador de Atividade */}
+          <View style={styles.buttonArea}>
+            {isLoading ? (
+              <ActivityIndicator size="large" color={colors.amarelo1} />
+            ) : (
+              <Botão onPress={createUser}>
+                <Text style={styles.textButton}>Cadastrar</Text>
+              </Botão>
+            )}
+          </View>
+
+          {/* Link para Login */}
+          <Text style={styles.lowText}>
+            Já tem uma conta?{' '}
+            <Link href="/login" style={{ color: colors.amarelo1 }}>
+              Clique aqui
+            </Link>
+          </Text>
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
+
+/*const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1, // Permite que o conteúdo cresça e role
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20, // Adiciona um padding vertical para melhor visualização
+  },
+  container: {
+    flex: 1,
+    minHeight: 500,
+    alignItems: 'center',
+    borderRadius: 20,
+    backgroundColor: colors.fundo2,
+    width: width * 0.95, // Ajuste para ocupar um pouco mais da largura
+  },
+  containerMed: {
+    width: '100%', // Ocupa a largura total do container pai
+    padding: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  containerMed_AreaInput: {
+    width: '90%', // Ajusta para ser responsivo dentro do containerMed
+    marginBottom: 20, // Aumenta o espaçamento entre os campos
+  },
+  containerMed_AreaInput_text: {
+    fontSize: 17,
+    color: colors.tituloBranco,
+    marginBottom: 8,
+    marginLeft: 5, // Ajusta o alinhamento do texto
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+  },
+  textButton: {
+    color: colors.preto,
+    fontSize: 20,
+    fontWeight: '400',
+  },
+  buttonArea: {
+    width: '90%',
+    height: 100, // Ajusta a altura do botão
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 20, // Espaçamento abaixo do botão
+  },
+  lowText: {
+    fontSize: 17,
+    color: colors.tituloBranco,
+    marginTop: 10, // Ajuste para maior espaçamento
+    marginBottom: 20, // Espaçamento abaixo do texto
+  },
+});
+// formPessoa.js
+/*
 import { colors } from '@/src/components/global';
 import { Botão, TxtInput } from '@/src/components/objects';
 import { auth, db } from '@/src/firebase/config';
@@ -106,7 +394,7 @@ export const FormPessoa = () => {
     }
 };
 */
-
+/*
 if (isLoading) {
   return (
     <View style={card.loadingContainer}>
@@ -261,3 +549,4 @@ const styles = StyleSheet.create({
     marginBottom: 20,
  },
 });
+*/

@@ -78,20 +78,23 @@ export function InputWhite({ ...rest }: TextInputProps) {
   )
 }
 
-export function TxtInput({ ...rest }: TextInputProps) {
+export function TxtInput({style, ...rest }: TextInputProps) {
   return (
     <TextInput
-      style={{
+      style={[
+      {
         width: '90%',
         height: 55,
-        paddingLeft: 30,
+        paddingLeft: 20,
+        paddingRight: 20,
         borderColor: colors.amarelo2,
         color: 'white',
         borderWidth: 1.2,
         borderRadius: 8,
         fontSize: 16,
-
-      }}
+      },
+      style
+    ]}
       {...rest}
     />
   )
