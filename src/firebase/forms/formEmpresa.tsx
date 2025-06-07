@@ -211,4 +211,22 @@ export const styles = StyleSheet.create({
     color: colors.tituloBranco,
     marginBottom: 20,
  },
+ fotoPerfil: {
+    width: 150,
+    height: 150,
+    borderRadius: 150,
+    maxHeight: 170,
+    borderWidth: 2,
+    borderColor: colors.amarelo2,
+    marginTop: 10,
+    marginBottom: 10,
+ },
+ containerFotoPerfil: {
+  backgroundColor: colors.fundo,
+  alignItems: 'center',
+  marginTop: 10,
+  padding: 15,
+  width: width * 0.8,
+  borderRadius: 8,
+ },
 });

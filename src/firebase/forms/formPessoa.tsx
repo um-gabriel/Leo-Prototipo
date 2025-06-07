@@ -1,20 +1,21 @@
 // formPessoa.js
 
 // Imports React Native
-import { View, Text, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native'; // Adicionado ScrollView
+import { View, Text, Alert, ActivityIndicator, ScrollView, Image, TouchableOpacity, Button } from 'react-native'; // Adicionado TouchableOpacity
 import React, { useState } from 'react';
 
 // Imports Expo
 import { Link, useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker'; // Importa o ImagePicker
 
 // Componentes internos
 import { colors } from '@/src/components/global';
 import { Botão, TxtInput } from '@/src/components/objects';
-import { styles } from '@/src/firebase/forms/formEmpresa'
+import { styles } from '@/src/firebase/forms/formEmpresa' // Certifique-se de que 'styles' tem o estilo para fotoPerfil
 
 // Imports firebase
 import { auth, db } from '@/src/firebase/config';
-import { width } from '@/src/firebase/functions/interface';
+// import { width } from '@/src/firebase/functions/interface'; // 'width' não está sendo usado, pode ser removido se não for necessário
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 
@@ -31,6 +32,34 @@ export const FormPessoa = () => {
   const [instagram, setInstagram] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [profileImage, setProfileImage] = useState(null); // Novo estado para a imagem de perfil
+
+  // Define uma imagem de perfil padrão (se nenhuma for selecionada)
+  const defaultProfileImage = 'https://via.placeholder.com/150/0000FF/FFFFFF?text=Adicionar+Foto'; // Exemplo de placeholder
+
+  /**
+   * @function pickImage
+   * @description Função para permitir que o usuário selecione uma imagem da galeria.
+   */
+  const pickImage = async () => {
+    // Solicita permissão para acessar a galeria
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permissão necessária', 'Desculpe, precisamos da permissão da galeria para isso funcionar!');
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Apenas imagens
+      allowsEditing: true, // Permite cortar a imagem
+      aspect: [1, 1], // Proporção 1:1 (quadrada)
+      quality: 1, // Qualidade máxima
+    });
+
+    if (!result.canceled) {
+      setProfileImage(result.assets[0].uri); // Define a URI da imagem selecionada
+    }
+  };
 
   /**
    * @function createUser
@@ -58,13 +87,14 @@ export const FormPessoa = () => {
         uid: userUid,
         email: email,
         name_conta: name,
-        telefone: telefone, // Telefone é opcional, então não precisa de validação extra aqui
+        telefone: telefone,
         endereco: endereco,
         desc_sobre: descricao,
-        instagram: instagram, // Instagram é opcional
-        linkedin: linkedin, // Linkedin é opcional
+        instagram: instagram,
+        linkedin: linkedin,
         tipo_conta: 'Pessoa',
         createdAt: new Date(),
+        profileImageUrl: profileImage, // Adiciona a URI da imagem ao Firestore
       };
 
       // 5. Salvando os dados do usuário no Firestore
@@ -73,7 +103,6 @@ export const FormPessoa = () => {
       console.log("Dados da conta salvos no Firestore com sucesso para o UID:", userUid);
 
       // 6. Sucesso no cadastro
-      Alert.alert('Concluído!', 'Sua conta foi criada com sucesso!');
       router.replace('/(tabs)/Home/Home');
 
     } catch (error) {
@@ -82,13 +111,12 @@ export const FormPessoa = () => {
 
       let errorMessage = "Ocorreu um erro ao cadastrar. Verifique as informações.";
 
-      // Mensagens de erro específicas do Firebase
       if (error.code === 'auth/email-already-in-use') {
         errorMessage = 'Este email já está em uso. Tente outro.';
       } else if (error.code === 'auth/invalid-email') {
         errorMessage = 'O formato do email é inválido.';
       } else if (error.code === 'auth/weak-password') {
-        errorMessage = 'A senha é muito fraca. Ela deve ter pelo menos 6 caracteres.';
+        errorMessage = 'A senha é muito fraca. Ela deve ter pelo menos 8 caracteres.';
       }
 
       Alert.alert("Erro ao cadastrar!", errorMessage);
@@ -105,6 +133,7 @@ export const FormPessoa = () => {
       <View style={styles.container}>
         <View style={styles.containerMed}>
 
+          {/* ... Seus outros campos de formulário (Nome, Email, Senha, Telefone, Endereço, Descrição, Instagram, LinkedIn) ... */}
           {/* Campo Nome */}
           <View style={styles.containerMed_AreaInput}>
             <Text style={styles.containerMed_AreaInput_text}>Digite seu nome:</Text>
@@ -135,7 +164,7 @@ export const FormPessoa = () => {
             <TxtInput
               value={password}
               onChangeText={setPassword}
-              placeholder="Mínimo de 6 caracteres"
+              placeholder="Mínimo de 8 caracteres"
               placeholderTextColor={colors.amarelo2}
               secureTextEntry
             />
@@ -201,6 +230,21 @@ export const FormPessoa = () => {
               autoCapitalize="none"
             />
           </View>
+
+          {/* Seção da Foto de Perfil */}
+          <View style={styles.containerFotoPerfil}>
+            <Text style={styles.containerMed_AreaInput_text}>Selecione uma foto de perfil:</Text>
+            <TouchableOpacity onPress={pickImage}>
+              <Image
+                style={styles.fotoPerfil}
+                source={{ uri: profileImage || defaultProfileImage }} // Usa a imagem selecionada ou a padrão
+              />
+            </TouchableOpacity>
+            {profileImage && (
+              <Button title="Remover Foto" onPress={() => setProfileImage(null)} color={colors.amarelo2} />
+            )}
+          </View>
+
 
           {/* Botão de Cadastro ou Indicador de Atividade */}
           <View style={styles.buttonArea}>
